@@ -2,7 +2,7 @@
 // answered with fictitious data so screens can be designed and checked without the Rust core.
 // Never bundled into the app (imported only when `import.meta.env.DEV` and outside Tauri).
 import { mockIPC } from "@tauri-apps/api/mocks";
-import type { AppInfo, AppsResult, Leftover, OrphansResult, UninstallPlan, DuplicateGroup, DuplicatesResult, DownloadItem, DownloadsResult, FileCategory, FileEntry, FindResult, ScanResult, StorageNode } from "../types";
+import type { SimilarResult, AppInfo, AppsResult, Leftover, OrphansResult, UninstallPlan, DuplicateGroup, DuplicatesResult, DownloadItem, DownloadsResult, FileCategory, FileEntry, FindResult, ScanResult, StorageNode } from "../types";
 
 const HOME = "/Users/demo";
 const now = Date.now();
@@ -423,6 +423,33 @@ registerMock("process_list", () => {
   return { processes, apps };
 });
 registerMock("quit_application", () => 1);
+
+const PICS = ["1e3a8a,3b82f6", "7c2d12,f97316", "14532d,22c55e", "581c87,a855f7"];
+const svgThumb = (i: number, v: number) => {
+  const [a, b] = PICS[i % PICS.length].split(",");
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='320' height='240'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#${a}'/><stop offset='1' stop-color='#${b}'/></linearGradient></defs><rect width='320' height='240' fill='url(#g)'/><circle cx='${210 + v * 6}' cy='${90 - v * 4}' r='${38 - v * 3}' fill='rgba(255,255,255,.75)'/><path d='M0 200 L90 120 L160 180 L230 110 L320 190 L320 240 L0 240Z' fill='rgba(0,0,0,.35)'/></svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+};
+registerMock("image_thumbnail", ({ path }) => {
+  const m = /g(\d)-(\d)/.exec(path as string);
+  return m ? svgThumb(+m[1], +m[2]) : null;
+});
+registerMock("photos_status", () => "notDetermined");
+registerMock("start_similar_images", ({ root, onEvent }) =>
+  streamJob<SimilarResult>(onEvent, root as string, () => {
+    const groups = [0, 1, 2].map((gi) => {
+      const images = [0, 1, 2, 3].slice(0, gi === 1 ? 2 : gi === 2 ? 4 : 3).map((v) => ({
+        ...fakeFile(`${HOME}/Pictures/Viagem/g${gi}-${v} IMG_${4020 + gi * 10 + v}.jpg`, [6.2e6, 2.1e6, 890e3, 4.4e6][v], 300 - v, "image"),
+        width: [4032, 2016, 1200, 4032][v],
+        height: [3024, 1512, 900, 3024][v],
+        distance: v === 0 ? 0.08 : 0.1 + v * 0.05,
+        keep: v === 0,
+      }));
+      return { id: images[0].path, images, reclaimable: images.filter((x) => !x.keep).reduce((s, x) => s + x.sizeLogical, 0) };
+    });
+    return { ...baseScan(root as string), groups, images: 1840, truncated: false, vision: { analyzed: 1840, candidates: 212, featurePrints: 212, failed: 3, elapsedMs: 9400 }, reclaimable: groups.reduce((s, g) => s + g.reclaimable, 0) };
+  }, 1500),
+);
 
 export function install() {
   mockIPC((cmd, args) => {

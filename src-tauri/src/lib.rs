@@ -5,6 +5,7 @@ pub mod db;
 pub mod duplicates;
 pub mod error;
 pub mod filesystem;
+pub mod images;
 pub mod jobs;
 pub mod menubar;
 pub mod processes;
@@ -99,6 +100,12 @@ pub fn run() {
             commands::apps::uninstall_app,
             commands::apps::start_orphan_scan,
             commands::apps::remove_orphans,
+            commands::images::start_similar_images,
+            commands::images::image_thumbnail,
+            commands::images::photos_status,
+            commands::images::start_similar_photos,
+            commands::images::photo_thumbnail,
+            commands::images::delete_photos,
             commands::health::health,
             commands::health::process_list,
             commands::health::quit_application,

@@ -31,6 +31,7 @@ pub enum SettingsPane {
     FullDiskAccess,
     LoginItems,
     Storage,
+    Photos,
 }
 
 /// Opens a System Settings pane. The user always makes the change there.
@@ -40,6 +41,7 @@ pub fn open_system_settings(pane: SettingsPane) -> AppResult<()> {
         SettingsPane::FullDiskAccess => "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles",
         SettingsPane::LoginItems => "x-apple.systempreferences:com.apple.LoginItems-Settings.extension",
         SettingsPane::Storage => "x-apple.systempreferences:com.apple.settings.Storage",
+        SettingsPane::Photos => "x-apple.systempreferences:com.apple.preference.security?Privacy_Photos",
     };
     Command::new("/usr/bin/open").arg(url).status()?;
     Ok(())

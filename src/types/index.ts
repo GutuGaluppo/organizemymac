@@ -288,3 +288,17 @@ export type AppUsage = { name: string; appPath?: string | null; memory: number; 
 export type ProcessList = { processes: ProcessInfo[]; apps: AppUsage[] };
 
 export type MenuBarSettings = { enabled: boolean; title: "icon" | "cpu" | "memory" | "both" };
+
+export type Sensitivity = "strict" | "normal";
+
+export type SimilarImage = FileEntry & { width: number; height: number; distance: number; keep: boolean };
+
+export type SimilarGroup = { id: string; images: SimilarImage[]; reclaimable: number };
+
+export type VisionStats = { analyzed: number; candidates: number; featurePrints: number; failed: number; elapsedMs: number };
+
+export type SimilarResult = ScanResult & { groups: SimilarGroup[]; images: number; truncated: boolean; vision: VisionStats; reclaimable: number };
+
+export type PhotoMember = { id: string; width: number; height: number; distance: number; keep: boolean };
+
+export type SimilarPhotosResult = { groups: PhotoMember[][]; vision: VisionStats };

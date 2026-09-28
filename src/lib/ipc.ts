@@ -39,7 +39,7 @@ export const api = {
   storageNode: (scanId: string, path?: string, depth = 1, limit = 200) =>
     invoke<StorageNode>("storage_node", { scanId, path, depth, limit }),
   permissionStatus: () => invoke<PermissionStatus>("permission_status"),
-  openSystemSettings: (pane: "fullDiskAccess" | "loginItems" | "storage") =>
+  openSystemSettings: (pane: "fullDiskAccess" | "loginItems" | "storage" | "photos") =>
     invoke<void>("open_system_settings", { pane }),
   suggestedLocations: () => invoke<Location[]>("suggested_locations"),
   appInfo: () => invoke<BuildInfo>("app_info"),
@@ -58,6 +58,10 @@ export const api = {
   moveToTrash: (request: { items: { path: string; size: number }[]; scanRoot?: string }) =>
     invoke<OperationOutcome[]>("move_to_trash", { request }),
   pathExists: (path: string) => invoke<boolean>("path_exists", { path }),
+  imageThumbnail: (path: string) => invoke<string | null>("image_thumbnail", { path }),
+  photosStatus: (request = false) => invoke<string>("photos_status", { request }),
+  photoThumbnail: (id: string) => invoke<string | null>("photo_thumbnail", { id }),
+  deletePhotos: (ids: string[]) => invoke<boolean>("delete_photos", { ids }),
   health: () => invoke<Health>("health"),
   processList: () => invoke<ProcessList>("process_list"),
   quitApplication: (appPath: string) => invoke<number>("quit_application", { appPath }),

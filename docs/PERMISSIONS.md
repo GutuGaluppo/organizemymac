@@ -26,3 +26,10 @@ blocks. To avoid surprises:
   probably for a permission prompt.
 
 Desktop, Documents and Downloads ask once per app; that prompt is expected.
+
+## Photos (optional)
+
+Only for the "Fotos" source of Similar Images. The app asks through PhotoKit (the system prompt uses
+`NSPhotoLibraryUsageDescription`) and reads thumbnails with network access off, so originals in
+iCloud are never downloaded. The Photos library package is never read directly. Deleting goes
+through PhotoKit: macOS asks for confirmation and the items go to Recently Deleted.

@@ -17,6 +17,7 @@ aplicativos com os restos que deixam.
 | M3 | Mapa de espaço: treemap proporcional (squarified), lista hierárquica, navegação por pastas, trilha de navegação e seleção | ✅ |
 | M4 | Aplicativos: lista com tamanho, versão e último uso; desinstalação com prévia completa dos arquivos em ~/Library por nível de confiança; restos de apps desinstalados | ✅ |
 | M5 | Saúde do Mac e barra de menus: CPU, memória, swap, disco, bateria, tempo ligado, apps abertos e os que mais usam memória | ✅ |
+| M6 | Imagens parecidas: helper em Swift (Vision), pré-filtro perceptivo, feature prints, agrupamento e integração com o Fotos | ✅ |
 
 M0–M4 formam o MVP 1.0 recomendado no plano. O plano completo está em [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md).
 
@@ -28,6 +29,7 @@ M0–M4 formam o MVP 1.0 recomendado no plano. O plano completo está em [docs/I
 - **Grandes e antigos:** filtros por tamanho (100 MB, 500 MB, 1 GB), tempo sem modificação e tipo; arquivos dentro de apps e bibliotecas não são separados.
 - **Downloads:** instaladores antigos (pré-selecionados), arquivos grandes, compactados (os já extraídos aparecem como seguros), instaladores recentes, capturas de tela e arquivos antigos.
 - **Duplicados:** agrupa por tamanho, compara trechos do início, meio e fim e só então calcula o BLAKE3 completo (em ~/Projects: 8.307 candidatos, 1.616 lidos por inteiro, 1,8 GB/s). A seleção automática mantém a cópia fora de Downloads e da Lixeira, sem "cópia" no nome e mais antiga; o app recusa remover todas as cópias de um grupo e pula as que mudaram desde a análise.
+- **Imagens parecidas:** um helper em Swift (sidecar do Tauri) gera miniaturas, calcula um hash perceptivo para descartar o que não tem par e só então roda o Vision (`VNGenerateImageFeaturePrintRequest`) nos candidatos. Duas sensibilidades, calibradas com cópias redimensionadas, recomprimidas e recortadas. Mantém a imagem de maior resolução. Também funciona na biblioteca do Fotos pelo PhotoKit: nunca mexe nos arquivos internos da biblioteca, não baixa originais do iCloud e apaga só pelo próprio Fotos (com a confirmação dele e Apagados Recentemente).
 - **Lixeira:** quanto ocupa e o que tem; esvaziar pede confirmação. Sem Acesso Total ao Disco, dá para pedir ao Finder.
 - **Aplicativos:** apps de /Applications e ~/Applications com tamanho, versão e último uso (Spotlight); filtros "sem uso há 6 meses" e App Store. Apps do macOS são protegidos; apps abertos precisam ser encerrados antes.
 - **Desinstalar:** o app e os arquivos dele em ~/Library, com o motivo de cada item e o total por local. Identificador exato do app e pastas conhecidas (rules/apps) são *seguros* e já vêm marcados; pasta do fabricante ou com nome parecido pede *revisão*; contêiner compartilhado é *risco*. O servidor refaz o plano e só aceita caminhos que fazem parte dele.
@@ -51,7 +53,7 @@ M0–M4 formam o MVP 1.0 recomendado no plano. O plano completo está em [docs/I
 
 ## Desenvolvimento
 
-Requisitos: macOS 13+, Node 20+, Rust estável, Xcode Command Line Tools.
+Requisitos: macOS 13+, Node 20+, Rust estável, Xcode (o `build.rs` compila o helper em Swift em `native/macos-helper`).
 
 ```bash
 npm install

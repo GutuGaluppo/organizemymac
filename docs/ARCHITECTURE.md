@@ -69,3 +69,17 @@ menu item) and is refused for system processes, other users' processes and Organ
 The menu bar thread runs with the *background* QoS class: metrics every 5 s, processes every 30 s,
 and it stops as soon as the item is turned off. With the item on, closing the window hides it; the
 Dock icon or the menu bring it back.
+
+## Swift helper (`native/macos-helper`)
+
+A small command-line tool for what Apple frameworks do better than Rust bindings: Vision feature
+prints and PhotoKit. `build.rs` compiles it with `swiftc` into `src-tauri/binaries/organiza-helper-<target>`
+and Tauri ships it as a sidecar next to the app's executable. The Rust core starts it with fixed
+arguments and JSON on stdin; progress comes back as JSON lines on stderr and the result on stdout.
+The job's cancel flag kills the process. The helper never deletes files; Photos assets are only
+deleted through `PHAssetChangeRequest`, which shows macOS's own confirmation.
+
+Similar images: thumbnails (ImageIO, orientation applied) → 64-bit difference hash → candidate
+pairs only between images whose aspect ratios differ by less than 8% and whose hashes differ by at
+most 12/18 bits → Vision feature prints only for images in a pair → union-find on pairs under the
+distance threshold (0.2 strict, 0.35 normal).

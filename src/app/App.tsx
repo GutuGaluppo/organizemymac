@@ -12,6 +12,7 @@ import { SpaceMapPage } from "../features/spacemap/SpaceMapPage";
 import { AppsPage } from "../features/applications/AppsPage";
 import { LeftoversPage } from "../features/applications/LeftoversPage";
 import { PerformancePage } from "../features/performance/PerformancePage";
+import { SimilarImagesPage } from "../features/images/SimilarImagesPage";
 import { Onboarding, hasOnboarded } from "../features/onboarding/Onboarding";
 
 export function App() {
@@ -28,6 +29,7 @@ export function App() {
         {section === "largeFiles" && <LargeFilesPage />}
         {section === "downloads" && <DownloadsPage />}
         {section === "duplicates" && <DuplicatesPage />}
+        {section === "similarImages" && <SimilarImagesPage />}
         {section === "trash" && <TrashPage />}
         {section === "apps" && <AppsPage />}
         {section === "leftovers" && <LeftoversPage />}
