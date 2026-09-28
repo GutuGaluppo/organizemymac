@@ -1,5 +1,6 @@
 pub mod applications;
 pub mod cleanup;
+pub mod cloud;
 pub mod commands;
 pub mod db;
 pub mod duplicates;
@@ -13,6 +14,7 @@ pub mod smart_care;
 pub mod state;
 pub mod storage;
 pub mod types;
+pub mod updates;
 
 use std::path::PathBuf;
 use std::sync::OnceLock;
@@ -107,6 +109,12 @@ pub fn run() {
             commands::images::start_similar_photos,
             commands::images::photo_thumbnail,
             commands::images::delete_photos,
+            commands::cloud::cloud_folders,
+            commands::cloud::start_cloud_usage,
+            commands::cloud::evict_icloud,
+            commands::cloud::start_update_check,
+            commands::cloud::open_app_store_page,
+            commands::cloud::open_application,
             commands::cleanup_rules::cleanup_rules,
             commands::cleanup_rules::add_custom_rule,
             commands::cleanup_rules::remove_custom_rule,

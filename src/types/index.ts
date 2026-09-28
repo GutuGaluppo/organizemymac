@@ -348,3 +348,35 @@ export type RuleResult = CleanupRule & { items: RuleItem[]; size: number; blocke
 export type CustomRuleDef = { id: string; title: string; folder: string; risk: Risk };
 
 export type RulesReport = { results: RuleResult[]; custom: CustomRuleDef[]; fullDiskAccess: boolean };
+
+export type CloudProvider = "iCloud" | "googleDrive" | "dropbox" | "oneDrive" | "box" | "other";
+
+export type CloudFolder = { provider: CloudProvider; name: string; path: string; canEvict: boolean };
+
+export type CloudUsage = CloudFolder & {
+  files: number;
+  totalBytes: number;
+  localBytes: number;
+  cloudOnlyFiles: number;
+  largestLocal: FileEntry[];
+  cancelled: boolean;
+};
+
+export type EvictOutcome = { path: string; ok: boolean; error?: string | null };
+
+export type UpdateSource = "appStore" | "sparkle" | "none";
+
+export type UpdateInfo = {
+  path: string;
+  name: string;
+  bundleId?: string | null;
+  installed?: string | null;
+  source: UpdateSource;
+  feedUrl?: string | null;
+  latest?: string | null;
+  updateAvailable: boolean;
+  url?: string | null;
+  error?: string | null;
+};
+
+export type UpdatesResult = { apps: UpdateInfo[]; checkedOnline: boolean };

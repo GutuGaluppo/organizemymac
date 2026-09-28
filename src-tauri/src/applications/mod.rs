@@ -136,10 +136,14 @@ pub fn list_apps(home: &Path, running: &[PathBuf], cancel: &Arc<AtomicBool>, pro
                 let from_app_store = path.join("Contents/_MASReceipt").exists();
                 let system_app = info.bundle_id.as_deref().is_some_and(|id| id.starts_with("com.apple.")) && !from_app_store;
                 AppInfo {
+                    // Some names carry invisible direction marks (e.g. "\u{200e}WhatsApp").
                     name: info
                         .name
                         .clone()
-                        .unwrap_or_else(|| path.file_stem().map(|s| s.to_string_lossy().into_owned()).unwrap_or_default()),
+                        .unwrap_or_else(|| path.file_stem().map(|s| s.to_string_lossy().into_owned()).unwrap_or_default())
+                        .chars()
+                        .filter(|c| !matches!(c, '\u{200e}' | '\u{200f}' | '\u{202a}'..='\u{202e}'))
+                        .collect(),
                     path: path.display().to_string(),
                     bundle_id: info.bundle_id,
                     version: info.version,

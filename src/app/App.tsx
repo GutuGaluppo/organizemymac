@@ -15,6 +15,8 @@ import { PerformancePage } from "../features/performance/PerformancePage";
 import { SimilarImagesPage } from "../features/images/SimilarImagesPage";
 import { SmartCarePage } from "../features/smartcare/SmartCarePage";
 import { AdvancedCleanupPage } from "../features/cleanup/AdvancedCleanupPage";
+import { CloudPage } from "../features/cloud/CloudPage";
+import { UpdatesPage } from "../features/applications/UpdatesPage";
 import { Onboarding, hasOnboarded } from "../features/onboarding/Onboarding";
 
 export function App() {
@@ -34,6 +36,8 @@ export function App() {
         {section === "duplicates" && <DuplicatesPage />}
         {section === "similarImages" && <SimilarImagesPage />}
         {section === "cleanup" && <AdvancedCleanupPage />}
+        {section === "cloud" && <CloudPage />}
+        {section === "updates" && <UpdatesPage />}
         {section === "trash" && <TrashPage />}
         {section === "apps" && <AppsPage />}
         {section === "leftovers" && <LeftoversPage />}

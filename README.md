@@ -21,6 +21,7 @@ aplicativos com os restos que deixam.
 | M7 | Cuidado inteligente: orquestra as análises, recomendações determinísticas, tela única de revisão e plano de limpeza seguro | ✅ |
 | M8 | Limpeza avançada: banco de regras (caches, registros, ferramentas de desenvolvimento, navegadores, anexos do Mail) e regras personalizadas | ✅ |
 | M9 | Helper privilegiado de manutenção (DNS, Spotlight, snapshots do Time Machine): **só o design e a revisão de segurança** ([docs/M9-PRIVILEGED-HELPER-REVIEW.md](docs/M9-PRIVILEGED-HELPER-REVIEW.md)); o plano exige essa revisão antes de qualquer código | 📝 |
+| M10 | Nuvem e atualizações: uso local de iCloud Drive, Google Drive, Dropbox e OneDrive, remover download do iCloud, detecção de versões (App Store e Sparkle) | ✅ |
 
 M0–M4 formam o MVP 1.0 recomendado no plano. O plano completo está em [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md).
 
@@ -41,6 +42,8 @@ M0–M4 formam o MVP 1.0 recomendado no plano. O plano completo está em [docs/I
 - **Restos de apps:** arquivos em ~/Library com o identificador de um app que não está em nenhum disco indexado pelo Spotlight. Identificadores da Apple são ignorados; se o fabricante ainda tem apps instalados, o item fica para revisão.
 - **Desempenho:** CPU com histórico, memória e swap, disco, bateria (pmset), tempo ligado e processos separados em aplicativos (helpers somados ao app), segundo plano e sistema. "Encerrar" só aparece para apps comuns seus e equivale a escolher Encerrar no menu do app (nunca `kill -9`). Atualiza a cada 2 s e para quando a janela está escondida.
 - **Barra de menus:** CPU e/ou memória no título; no menu, disco, bateria, tempo ligado e os 5 apps que mais usam memória. Métricas a cada 5 s e processos a cada 30 s, em prioridade baixa (≈0,4% de um núcleo no build de desenvolvimento). Com ela ligada, fechar a janela mantém o app na barra.
+- **Nuvem:** quanto de cada pasta sincronizada está baixado, quantos arquivos estão só na nuvem e os maiores baixados. No iCloud Drive, "Remover download" usa a API pública (`evictUbiquitousItem`): o arquivo continua no iCloud. Para Google Drive, Dropbox e OneDrive o app mostra os números e explica a opção "somente on-line" de cada um (não há API pública para fazer isso por eles).
+- **Atualizações:** versão instalada de cada app; apps da App Store e com atualizador Sparkle (feed HTTPS declarado no app) são consultados só quando você pede. Betas e canais de teste são ignorados. O app nunca baixa nem instala: abre o app ou a App Store.
 - Em qualquer lista: Visualização Rápida, Mostrar no Finder e Ignorar. Antes de mover, uma revisão mostra cada caminho, o tamanho e o total.
 
 ## Stack
@@ -85,5 +88,5 @@ Prévia da interface no navegador, com dados fictícios: `npm run dev` e abra ht
 
 ## Privacidade
 
-Sem telemetria. Histórico de análises, registro de operações e estatísticas ficam só no Mac, em
+Sem telemetria. O app só acessa a rede quando você pede para verificar atualizações: consulta a App Store (identificador de cada app da App Store) e o endereço de atualização HTTPS que cada app declara. Histórico de análises, registro de operações e estatísticas ficam só no Mac, em
 `~/Library/Application Support/dev.galuppo.OrganizaMyMac`.

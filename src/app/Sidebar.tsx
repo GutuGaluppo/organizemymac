@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Activity, Brush, Images, Sparkles, AppWindow, PackageX, Copy, Download, FileSearch, FolderSearch, LayoutGrid, Map as MapIcon, Settings, Trash2 } from "lucide-react";
+import { Activity, ArrowUpCircle, Brush, Cloud, Images, Sparkles, AppWindow, PackageX, Copy, Download, FileSearch, FolderSearch, LayoutGrid, Map as MapIcon, Settings, Trash2 } from "lucide-react";
 import { useNav, type Section } from "../stores/nav";
 import { useJobs } from "../stores/jobs";
 
@@ -23,6 +23,7 @@ const groups: Group[] = [
       { id: "duplicates", label: "Duplicados", icon: <Copy />, job: "duplicates" },
       { id: "similarImages", label: "Imagens parecidas", icon: <Images />, job: "similarImages" },
       { id: "cleanup", label: "Limpeza avançada", icon: <Brush /> },
+      { id: "cloud", label: "Nuvem", icon: <Cloud />, job: "cloud" },
       { id: "trash", label: "Lixeira", icon: <Trash2 /> },
     ],
   },
@@ -31,6 +32,7 @@ const groups: Group[] = [
     items: [
       { id: "apps", label: "Aplicativos", icon: <AppWindow />, job: "apps" },
       { id: "leftovers", label: "Restos de apps", icon: <PackageX />, job: "leftovers" },
+      { id: "updates", label: "Atualizações", icon: <ArrowUpCircle />, job: "updates" },
     ],
   },
   { label: "Mac", items: [{ id: "performance", label: "Desempenho", icon: <Activity /> }] },

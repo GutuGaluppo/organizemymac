@@ -308,6 +308,24 @@ func photosThumbnail() {
     if let data, (try? data.write(to: URL(fileURLWithPath: input.out))) != nil { write(["ok": "true"]) } else { write(["ok": "false"]) }
 }
 
+struct EvictInput: Decodable { let paths: [String] }
+struct EvictOutcome: Encodable { let path: String; let ok: Bool; let error: String? }
+
+/// Removes local copies of iCloud Drive files (they stay in iCloud and download again on open).
+/// Public API; fails for files that are not uploaded yet.
+func evict() {
+    let input = readInput(EvictInput.self)
+    let out = input.paths.map { p -> EvictOutcome in
+        do {
+            try FileManager.default.evictUbiquitousItem(at: URL(fileURLWithPath: p))
+            return EvictOutcome(path: p, ok: true, error: nil)
+        } catch {
+            return EvictOutcome(path: p, ok: false, error: error.localizedDescription)
+        }
+    }
+    write(out)
+}
+
 let args = CommandLine.arguments
 switch args.count > 1 ? args[1] : "" {
 case "similar": similarFiles()
@@ -315,6 +333,7 @@ case "photos-status": photosStatus(request: args.contains("--request"))
 case "photos-similar": photosSimilar()
 case "photos-delete": photosDelete()
 case "photos-thumbnail": photosThumbnail()
+case "evict": evict()
 case "--version": print("organiza-helper 1")
 default:
     FileHandle.standardError.write("usage: organiza-helper similar|photos-status [--request]|photos-similar|photos-delete\n".data(using: .utf8)!)

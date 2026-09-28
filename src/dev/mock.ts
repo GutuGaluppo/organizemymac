@@ -2,7 +2,7 @@
 // answered with fictitious data so screens can be designed and checked without the Rust core.
 // Never bundled into the app (imported only when `import.meta.env.DEV` and outside Tauri).
 import { mockIPC } from "@tauri-apps/api/mocks";
-import type { RulesReport, SmartCareReport, SimilarResult, AppInfo, AppsResult, Leftover, OrphansResult, UninstallPlan, DuplicateGroup, DuplicatesResult, DownloadItem, DownloadsResult, FileCategory, FileEntry, FindResult, ScanResult, StorageNode } from "../types";
+import type { CloudUsage, UpdatesResult, RulesReport, SmartCareReport, SimilarResult, AppInfo, AppsResult, Leftover, OrphansResult, UninstallPlan, DuplicateGroup, DuplicatesResult, DownloadItem, DownloadsResult, FileCategory, FileEntry, FindResult, ScanResult, StorageNode } from "../types";
 
 const HOME = "/Users/demo";
 const now = Date.now();
@@ -510,6 +510,38 @@ registerMock("cleanup_rules", (): RulesReport => ({
 registerMock("run_cleanup_rules", ({ items }) => (items as { path: string; size: number }[]).map((i) => ({ path: i.path, size: i.size, ok: true, error: null })));
 registerMock("add_custom_rule", () => null);
 registerMock("remove_custom_rule", () => null);
+
+registerMock("cloud_folders", () => [
+  { provider: "iCloud", name: "iCloud Drive", path: `${HOME}/Library/Mobile Documents/com~apple~CloudDocs`, canEvict: true },
+  { provider: "googleDrive", name: "GoogleDrive · demo@gmail.com", path: `${HOME}/Library/CloudStorage/GoogleDrive-demo@gmail.com`, canEvict: false },
+  { provider: "dropbox", name: "Dropbox", path: `${HOME}/Library/CloudStorage/Dropbox`, canEvict: false },
+]);
+registerMock("start_cloud_usage", ({ path, onEvent }) =>
+  streamJob<CloudUsage>(onEvent, path as string, () => ({
+    provider: "iCloud", name: "iCloud Drive", path: path as string, canEvict: (path as string).includes("Mobile Documents"),
+    files: 18_420, totalBytes: 212e9, localBytes: 64e9, cloudOnlyFiles: 9_870, cancelled: false,
+    largestLocal: [
+      fakeFile(`${HOME}/Library/Mobile Documents/com~apple~CloudDocs/Vídeos/Formatura.mov`, 12.4e9, 400, "video"),
+      fakeFile(`${HOME}/Library/Mobile Documents/com~apple~CloudDocs/Backups/fotos-2023.zip`, 8.1e9, 600, "archive"),
+      fakeFile(`${HOME}/Library/Mobile Documents/com~apple~CloudDocs/Projetos/render-final.mp4`, 3.3e9, 90, "video"),
+    ],
+  }), 900),
+);
+registerMock("evict_icloud", ({ paths }) => (paths as string[]).map((p) => ({ path: p, ok: true, error: null })));
+registerMock("start_update_check", ({ online, onEvent }) =>
+  streamJob<UpdatesResult>(onEvent, "/Applications", () => ({
+    checkedOnline: !!online,
+    apps: [
+      { path: "/Applications/Slack.app", name: "Slack", bundleId: "com.tinyspeck.slackmacgap", installed: "4.51.191", source: "appStore", latest: online ? "4.52.162" : null, updateAvailable: !!online, url: "https://apps.apple.com/app/slack/id803453959" },
+      { path: "/Applications/NordVPN.app", name: "NordVPN", bundleId: "com.nordvpn.macos", installed: "10.10.1", source: "sparkle", latest: online ? "10.12.0" : null, updateAvailable: !!online },
+      { path: "/Applications/iTerm.app", name: "iTerm2", bundleId: "com.googlecode.iterm2", installed: "3.7.3", source: "sparkle", latest: online ? "3.7.3" : null, updateAvailable: false },
+      { path: "/Applications/Telegram.app", name: "Telegram", bundleId: "ru.keepcoder.Telegram", installed: "12.10", source: "appStore", latest: online ? "12.10" : null, updateAvailable: false },
+      { path: "/Applications/Figma.app", name: "Figma", bundleId: "com.figma.Desktop", installed: "126.1", source: "none", updateAvailable: false },
+    ],
+  }), 700),
+);
+registerMock("open_app_store_page", () => null);
+registerMock("open_application", () => null);
 
 export function install() {
   mockIPC((cmd, args) => {

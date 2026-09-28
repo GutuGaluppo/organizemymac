@@ -3,6 +3,7 @@
 
 pub mod apps;
 pub mod cleanup_rules;
+pub mod cloud;
 pub mod duplicates;
 pub mod files;
 pub mod health;
