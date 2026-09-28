@@ -261,3 +261,30 @@ export type UninstallPlan = {
 export type OrphanGroup = { bundleId: string; vendorInstalled: boolean; items: Leftover[]; size: number };
 
 export type OrphansResult = { groups: OrphanGroup[]; totalSize: number; fullDiskAccess: boolean };
+
+export type Battery = { percent: number; charging: boolean; onAc: boolean; minutesRemaining?: number | null; state: string };
+
+export type Health = {
+  cpu: number;
+  cores: number;
+  loadAverage: [number, number, number];
+  memoryTotal: number;
+  memoryUsed: number;
+  memoryAvailable: number;
+  swapTotal: number;
+  swapUsed: number;
+  diskTotal: number;
+  diskFree: number;
+  uptime: number;
+  battery?: Battery | null;
+};
+
+export type ProcessCategory = "application" | "background" | "system";
+
+export type ProcessInfo = { pid: number; name: string; memory: number; cpu: number; category: ProcessCategory; appPath?: string | null; user?: string | null };
+
+export type AppUsage = { name: string; appPath?: string | null; memory: number; cpu: number; processes: number; canQuit: boolean };
+
+export type ProcessList = { processes: ProcessInfo[]; apps: AppUsage[] };
+
+export type MenuBarSettings = { enabled: boolean; title: "icon" | "cpu" | "memory" | "both" };

@@ -11,6 +11,7 @@ import { DuplicatesPage } from "../features/duplicates/DuplicatesPage";
 import { SpaceMapPage } from "../features/spacemap/SpaceMapPage";
 import { AppsPage } from "../features/applications/AppsPage";
 import { LeftoversPage } from "../features/applications/LeftoversPage";
+import { PerformancePage } from "../features/performance/PerformancePage";
 import { Onboarding, hasOnboarded } from "../features/onboarding/Onboarding";
 
 export function App() {
@@ -30,6 +31,7 @@ export function App() {
         {section === "trash" && <TrashPage />}
         {section === "apps" && <AppsPage />}
         {section === "leftovers" && <LeftoversPage />}
+        {section === "performance" && <PerformancePage />}
         {section === "settings" && <SettingsPage />}
       </main>
       {!onboarded && <Onboarding onDone={() => setOnboarded(true)} />}

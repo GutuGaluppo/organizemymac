@@ -4,6 +4,7 @@
 pub mod apps;
 pub mod duplicates;
 pub mod files;
+pub mod health;
 pub mod scan;
 pub mod system;
 

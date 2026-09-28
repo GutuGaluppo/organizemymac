@@ -6,6 +6,7 @@ import { Button, Card, PageHeader } from "../../components/ui";
 import { FullDiskAccessRow } from "../onboarding/Onboarding";
 import { formatBytes, formatCount, formatDateTime, shortPath } from "../../lib/format";
 import { useHome } from "../scanner/ScannerPage";
+import type { MenuBarSettings } from "../../types";
 
 function Section({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
   return (
@@ -13,6 +14,42 @@ function Section({ title, description, children }: { title: string; description?
       <h2 className="text-[13px] font-semibold">{title}</h2>
       {description && <p className="mt-0.5 mb-2.5 text-[12px] text-ink-3">{description}</p>}
       <Card className="p-4">{children}</Card>
+    </div>
+  );
+}
+
+function MenuBarSection() {
+  const qc = useQueryClient();
+  const { data } = useQuery({ queryKey: ["menuBar"], queryFn: api.menuBarSettings });
+  const save = async (next: MenuBarSettings) => {
+    await api.setMenuBarSettings(next);
+    qc.setQueryData(["menuBar"], next);
+  };
+  if (!data) return null;
+  return (
+    <div className="space-y-3">
+      <label className="flex items-center gap-2 text-[12.5px]">
+        <input type="checkbox" className="accent-[var(--accent)]" checked={data.enabled} onChange={(e) => save({ ...data, enabled: e.target.checked })} />
+        Mostrar o OrganizaMyMac na barra de menus
+      </label>
+      <div className="flex items-center gap-2 text-[12.5px]">
+        <span className="text-ink-2">Ao lado do ícone:</span>
+        <select
+          disabled={!data.enabled}
+          value={data.title}
+          onChange={(e) => save({ ...data, title: e.target.value as MenuBarSettings["title"] })}
+          className="h-7 rounded-md border border-line bg-surface px-2 disabled:opacity-50"
+        >
+          <option value="icon">Nada (só o ícone)</option>
+          <option value="cpu">Uso de CPU</option>
+          <option value="memory">Uso de memória</option>
+          <option value="both">CPU e memória</option>
+        </select>
+      </div>
+      <p className="text-[11.5px] text-ink-3">
+        O menu mostra CPU, memória, disco, bateria e os apps que mais usam memória. Atualiza a cada 5 segundos com prioridade baixa. Com ele
+        ligado, fechar a janela mantém o app na barra de menus.
+      </p>
     </div>
   );
 }
@@ -107,6 +144,9 @@ export function SettingsPage() {
       <div className="max-w-3xl space-y-6 px-8 pb-10">
         <Section title="Permissões" description="O app funciona sem Acesso Total ao Disco, mas não enxerga pastas protegidas pelo macOS.">
           <FullDiskAccessRow compact />
+        </Section>
+        <Section title="Barra de menus">
+          <MenuBarSection />
         </Section>
         <Section title="Itens ignorados" description="Pastas que nenhuma análise lê e que nunca são sugeridas para remoção.">
           <IgnoreList />

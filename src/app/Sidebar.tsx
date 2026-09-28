@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { AppWindow, PackageX, Copy, Download, FileSearch, FolderSearch, LayoutGrid, Map as MapIcon, Settings, Trash2 } from "lucide-react";
+import { Activity, AppWindow, PackageX, Copy, Download, FileSearch, FolderSearch, LayoutGrid, Map as MapIcon, Settings, Trash2 } from "lucide-react";
 import { useNav, type Section } from "../stores/nav";
 import { useJobs } from "../stores/jobs";
 
@@ -26,6 +26,7 @@ const groups: Group[] = [
       { id: "leftovers", label: "Restos de apps", icon: <PackageX />, job: "leftovers" },
     ],
   },
+  { label: "Mac", items: [{ id: "performance", label: "Desempenho", icon: <Activity /> }] },
 ];
 
 function NavItem({ item }: { item: Item }) {

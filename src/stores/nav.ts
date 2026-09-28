@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type Section = "overview" | "scanner" | "spaceMap" | "largeFiles" | "downloads" | "duplicates" | "trash" | "apps" | "leftovers" | "settings";
+export type Section = "overview" | "scanner" | "spaceMap" | "largeFiles" | "downloads" | "duplicates" | "trash" | "apps" | "leftovers" | "performance" | "settings";
 
 type NavStore = {
   section: Section;

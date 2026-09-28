@@ -16,6 +16,7 @@ aplicativos com os restos que deixam.
 | M2 | Duplicados: grupos por tamanho, hash de trechos, BLAKE3 completo, seleção automática que sempre mantém uma cópia, hard links reconhecidos | ✅ |
 | M3 | Mapa de espaço: treemap proporcional (squarified), lista hierárquica, navegação por pastas, trilha de navegação e seleção | ✅ |
 | M4 | Aplicativos: lista com tamanho, versão e último uso; desinstalação com prévia completa dos arquivos em ~/Library por nível de confiança; restos de apps desinstalados | ✅ |
+| M5 | Saúde do Mac e barra de menus: CPU, memória, swap, disco, bateria, tempo ligado, apps abertos e os que mais usam memória | ✅ |
 
 M0–M4 formam o MVP 1.0 recomendado no plano. O plano completo está em [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md).
 
@@ -31,6 +32,8 @@ M0–M4 formam o MVP 1.0 recomendado no plano. O plano completo está em [docs/I
 - **Aplicativos:** apps de /Applications e ~/Applications com tamanho, versão e último uso (Spotlight); filtros "sem uso há 6 meses" e App Store. Apps do macOS são protegidos; apps abertos precisam ser encerrados antes.
 - **Desinstalar:** o app e os arquivos dele em ~/Library, com o motivo de cada item e o total por local. Identificador exato do app e pastas conhecidas (rules/apps) são *seguros* e já vêm marcados; pasta do fabricante ou com nome parecido pede *revisão*; contêiner compartilhado é *risco*. O servidor refaz o plano e só aceita caminhos que fazem parte dele.
 - **Restos de apps:** arquivos em ~/Library com o identificador de um app que não está em nenhum disco indexado pelo Spotlight. Identificadores da Apple são ignorados; se o fabricante ainda tem apps instalados, o item fica para revisão.
+- **Desempenho:** CPU com histórico, memória e swap, disco, bateria (pmset), tempo ligado e processos separados em aplicativos (helpers somados ao app), segundo plano e sistema. "Encerrar" só aparece para apps comuns seus e equivale a escolher Encerrar no menu do app (nunca `kill -9`). Atualiza a cada 2 s e para quando a janela está escondida.
+- **Barra de menus:** CPU e/ou memória no título; no menu, disco, bateria, tempo ligado e os 5 apps que mais usam memória. Métricas a cada 5 s e processos a cada 30 s, em prioridade baixa (≈0,4% de um núcleo no build de desenvolvimento). Com ela ligada, fechar a janela mantém o app na barra.
 - Em qualquer lista: Visualização Rápida, Mostrar no Finder e Ignorar. Antes de mover, uma revisão mostra cada caminho, o tamanho e o total.
 
 ## Stack

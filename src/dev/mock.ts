@@ -384,6 +384,46 @@ registerMock("start_orphan_scan", ({ onEvent }) =>
 );
 registerMock("remove_orphans", ({ items }) => (items as { path: string; size: number }[]).map((i) => ({ ...i, ok: true, error: null })));
 
+let menuBar = { enabled: true, title: "cpu" };
+registerMock("menu_bar_settings", () => menuBar);
+registerMock("set_menu_bar_settings", ({ settings }) => {
+  menuBar = settings as typeof menuBar;
+  return null;
+});
+registerMock("health", () => ({
+  cpu: 8 + Math.random() * 22,
+  cores: 10,
+  loadAverage: [2.41, 2.2, 2.05],
+  memoryTotal: 24e9,
+  memoryUsed: 16.8e9 + Math.random() * 0.4e9,
+  memoryAvailable: 7e9,
+  swapTotal: 3.2e9,
+  swapUsed: 1.1e9,
+  diskTotal: 994.66e9,
+  diskFree: 212.4e9,
+  uptime: 3 * 86400 + 5 * 3600 + 12 * 60,
+  battery: { percent: 87, charging: false, onAc: false, minutesRemaining: 312, state: "discharging" },
+}));
+registerMock("process_list", () => {
+  const apps = [
+    { name: "Google Chrome", appPath: "/Applications/Google Chrome.app", memory: 3.9e9, cpu: 12.4, processes: 23, canQuit: true },
+    { name: "Xcode", appPath: "/Applications/Xcode.app", memory: 2.7e9, cpu: 4.1, processes: 6, canQuit: true },
+    { name: "Visual Studio Code", appPath: "/Applications/Visual Studio Code.app", memory: 1.6e9, cpu: 2.3, processes: 11, canQuit: true },
+    { name: "Figma", appPath: "/Applications/Figma.app", memory: 980e6, cpu: 1.1, processes: 5, canQuit: true },
+    { name: "Spotify", appPath: "/Applications/Spotify.app", memory: 410e6, cpu: 0.6, processes: 4, canQuit: true },
+  ];
+  const processes = [
+    ...apps.map((a, i) => ({ pid: 500 + i, name: a.name, memory: a.memory, cpu: a.cpu, category: "application", appPath: a.appPath, user: "demo" })),
+    { pid: 900, name: "node", memory: 620e6, cpu: 3.2, category: "background", appPath: null, user: "demo" },
+    { pid: 901, name: "rust-analyzer", memory: 1.1e9, cpu: 0.4, category: "background", appPath: null, user: "demo" },
+    { pid: 1, name: "launchd", memory: 30e6, cpu: 0.1, category: "system", appPath: null, user: "root" },
+    { pid: 120, name: "WindowServer", memory: 890e6, cpu: 6.2, category: "system", appPath: null, user: "_windowserver" },
+    { pid: 140, name: "mds_stores", memory: 210e6, cpu: 1.4, category: "system", appPath: null, user: "root" },
+  ];
+  return { processes, apps };
+});
+registerMock("quit_application", () => 1);
+
 export function install() {
   mockIPC((cmd, args) => {
     const handler = handlers[cmd];

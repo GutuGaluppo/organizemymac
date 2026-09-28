@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { AppWindow, ChevronRight, Copy, Map as MapIcon, Download, FileSearch, FolderSearch, HardDrive, Trash2, Usb } from "lucide-react";
+import { Activity, AppWindow, ChevronRight, Copy, Map as MapIcon, Download, FileSearch, FolderSearch, HardDrive, Trash2, Usb } from "lucide-react";
 import { api } from "../../lib/ipc";
 import { Card, PageHeader } from "../../components/ui";
 import { formatBytes, formatDateTime, shortPath } from "../../lib/format";
@@ -88,6 +88,7 @@ export function OverviewPage() {
             <Shortcut to="downloads" icon={<Download />} title="Downloads" text="Instaladores e arquivos que sobraram." />
             <Shortcut to="duplicates" icon={<Copy />} title="Duplicados" text="Cópias idênticas espalhadas pelo Mac." />
             <Shortcut to="apps" icon={<AppWindow />} title="Aplicativos" text="Desinstale apps junto com os arquivos que eles deixam." />
+            <Shortcut to="performance" icon={<Activity />} title="Desempenho" text="CPU, memória, bateria e os apps que mais consomem." />
             <Shortcut to="trash" icon={<Trash2 />} title="Lixeira" text="O que já foi removido ainda ocupa espaço." />
           </div>
         </div>

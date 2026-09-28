@@ -6,6 +6,8 @@ pub mod duplicates;
 pub mod error;
 pub mod filesystem;
 pub mod jobs;
+pub mod menubar;
+pub mod processes;
 pub mod state;
 pub mod storage;
 pub mod types;
@@ -61,7 +63,12 @@ fn setup(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let paths = AppPaths { home: home.clone(), data_dir: data_dir.clone(), log_dir };
     let db = Db::open(&data_dir.join("organizamymac.sqlite"))?;
     let policy = SafetyPolicy::system(&home, own_paths(&paths));
-    app.manage(AppState::new(paths, db, policy)?);
+    let state = AppState::new(paths, db, policy)?;
+    let menu_bar = menubar::MenuBar::new(menubar::load_settings(&state));
+    app.manage(state);
+    app.manage(processes::HealthMonitor::default());
+    app.manage(menu_bar);
+    menubar::apply(app.handle())?;
     Ok(())
 }
 
@@ -92,6 +99,11 @@ pub fn run() {
             commands::apps::uninstall_app,
             commands::apps::start_orphan_scan,
             commands::apps::remove_orphans,
+            commands::health::health,
+            commands::health::process_list,
+            commands::health::quit_application,
+            menubar::menu_bar_settings,
+            menubar::set_menu_bar_settings,
             commands::system::permission_status,
             commands::system::open_system_settings,
             commands::system::suggested_locations,
@@ -103,11 +115,21 @@ pub fn run() {
             commands::system::add_to_ignore_list,
             commands::system::remove_from_ignore_list,
         ])
+        .on_window_event(|window, event| {
+            // With the menu bar item on, closing the window keeps the app running there.
+            if let tauri::WindowEvent::CloseRequested { api, .. } = event {
+                if window.app_handle().state::<menubar::MenuBar>().settings().enabled {
+                    api.prevent_close();
+                    let _ = window.hide();
+                }
+            }
+        })
         .build(tauri::generate_context!())
         .expect("error while building OrganizaMyMac")
-        .run(|app, event| {
-            if let tauri::RunEvent::ExitRequested { .. } = event {
-                app.state::<AppState>().jobs.cancel_all();
-            }
+        .run(|app, event| match event {
+            tauri::RunEvent::ExitRequested { .. } => app.state::<AppState>().jobs.cancel_all(),
+            // Clicking the Dock icon brings the window back.
+            tauri::RunEvent::Reopen { .. } => menubar::show_main_window(app),
+            _ => {}
         });
 }
