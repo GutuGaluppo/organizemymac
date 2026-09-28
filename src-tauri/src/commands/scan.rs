@@ -107,6 +107,7 @@ pub fn storage_node(
     scan_id: String,
     path: Option<String>,
     depth: Option<u32>,
+    limit: Option<usize>,
 ) -> AppResult<StorageNode> {
     let session = state.session(&scan_id).ok_or_else(|| AppError::NotFound("scan (run it again)".into()))?;
     let session = session.lock().unwrap();
@@ -114,5 +115,6 @@ pub fn storage_node(
         Some(p) => session.tree.find(&PathBuf::from(&p)).ok_or_else(|| AppError::NotFound(p))?,
         None => session.tree.root_id().ok_or_else(|| AppError::NotFound("empty scan".into()))?,
     };
-    session.tree.view(id, depth.unwrap_or(1).min(4), 400).ok_or_else(|| AppError::NotFound("node".into()))
+    let limit = limit.unwrap_or(200).clamp(1, 400);
+    session.tree.view(id, depth.unwrap_or(1).min(3), limit).ok_or_else(|| AppError::NotFound("node".into()))
 }

@@ -14,6 +14,7 @@ aplicativos com os restos que deixam.
 | M0 | Base: Tauri + React, comandos Rust, jobs canceláveis com progresso, SQLite, permissões, camada de segurança, logs, fixtures de teste | ✅ |
 | M1 | Armazenamento: visão geral dos discos, arquivos grandes e antigos, Downloads, Lixeira, Mostrar no Finder, Visualização Rápida, mover para a Lixeira com revisão | ✅ |
 | M2 | Duplicados: grupos por tamanho, hash de trechos, BLAKE3 completo, seleção automática que sempre mantém uma cópia, hard links reconhecidos | ✅ |
+| M3 | Mapa de espaço: treemap proporcional (squarified), lista hierárquica, navegação por pastas, trilha de navegação e seleção | ✅ |
 
 O plano completo está em [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md).
 
@@ -21,6 +22,7 @@ O plano completo está em [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md).
 
 - **Visão geral:** espaço livre e usado de cada disco, atalhos e últimas análises.
 - **Scanner:** o que ocupa espaço em uma pasta ou no disco inteiro, com totais lógico e em disco, pastas e maiores arquivos.
+- **Mapa de espaço:** retângulos com área proporcional ao espaço, dois níveis por vez; clique numa pasta para entrar, trilha de navegação para voltar, lista hierárquica ao lado e seleção de pastas ou arquivos para a Lixeira. Usa a análise do Scanner, sem ler o disco de novo.
 - **Grandes e antigos:** filtros por tamanho (100 MB, 500 MB, 1 GB), tempo sem modificação e tipo; arquivos dentro de apps e bibliotecas não são separados.
 - **Downloads:** instaladores antigos (pré-selecionados), arquivos grandes, compactados (os já extraídos aparecem como seguros), instaladores recentes, capturas de tela e arquivos antigos.
 - **Duplicados:** agrupa por tamanho, compara trechos do início, meio e fim e só então calcula o BLAKE3 completo (em ~/Projects: 8.307 candidatos, 1.616 lidos por inteiro, 1,8 GB/s). A seleção automática mantém a cópia fora de Downloads e da Lixeira, sem "cópia" no nome e mais antiga; o app recusa remover todas as cópias de um grupo e pula as que mudaram desde a análise.
@@ -49,10 +51,14 @@ npm install
 npm run tauri dev
 ```
 
-Testes do núcleo (unidade e integração com fixtures sintéticas):
+Testes do núcleo (unidade e integração com fixtures sintéticas) e da interface:
 
 ```bash
 cd src-tauri && cargo test
+```
+
+```bash
+npm test
 ```
 
 Benchmark de leitura (não altera nada):

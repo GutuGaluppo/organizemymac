@@ -271,6 +271,45 @@ registerMock("move_duplicates_to_trash", ({ groups }) =>
   (groups as { remove: { path: string; size: number }[] }[]).flatMap((g) => g.remove.map((r) => ({ path: r.path, size: r.size, ok: true, error: null }))),
 );
 
+function nested(path: string, size: number, depth: number): StorageNode {
+  const names = ["Library", "Developer", "Caches", "Application Support", "Movies", "Projetos", "node_modules", "Fotos", "Backups", "Xcode", "DerivedData", "Docker", "Music", "Arquivos"];
+  let seed = [...path].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 9973, 7);
+  const rnd = () => ((seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648);
+  const count = depth > 0 ? 6 + Math.floor(rnd() * 8) : 0;
+  let left = size * 0.93;
+  const children: StorageNode[] = [];
+  for (let i = 0; i < count && left > 1e6; i++) {
+    const share = i === count - 1 ? left : left * (0.18 + rnd() * 0.35);
+    left -= share;
+    const isDir = rnd() > 0.2;
+    const name = isDir ? `${names[Math.floor(rnd() * names.length)]} ${i + 1}` : `arquivo-${i + 1}.${["mov", "zip", "dmg", "raw"][i % 4]}`;
+    children.push({ ...nested(`${path}/${name}`, share, isDir ? depth - 1 : 0), isDir, hasChildren: isDir });
+  }
+  return {
+    id: nodeId++,
+    name: path.split("/").pop() || path,
+    path,
+    size,
+    allocated: size,
+    files: Math.round(size / 2e6),
+    isDir: true,
+    looseFilesSize: size - children.reduce((s, c) => s + c.size, 0),
+    hasChildren: children.length > 0,
+    children: depth > 0 ? children : null,
+  };
+}
+const nodeSizes = new Map<string, number>([[HOME, 318e9]]);
+registerMock("storage_node", ({ path, depth }) => {
+  const p = (path as string | undefined) ?? HOME;
+  const n = nested(p, nodeSizes.get(p) ?? 40e9, (depth as number) ?? 1);
+  const remember = (x: StorageNode) => {
+    nodeSizes.set(x.path, x.size);
+    x.children?.forEach(remember);
+  };
+  remember(n);
+  return n;
+});
+
 export function install() {
   mockIPC((cmd, args) => {
     const handler = handlers[cmd];

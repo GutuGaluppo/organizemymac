@@ -32,8 +32,8 @@ export function startJob<T>(command: string, args: Record<string, unknown>, onEv
 
 export const api = {
   cancelJob: (jobId: string) => invoke<boolean>("cancel_job", { jobId }),
-  storageNode: (scanId: string, path?: string, depth = 1) =>
-    invoke<StorageNode>("storage_node", { scanId, path, depth }),
+  storageNode: (scanId: string, path?: string, depth = 1, limit = 200) =>
+    invoke<StorageNode>("storage_node", { scanId, path, depth, limit }),
   permissionStatus: () => invoke<PermissionStatus>("permission_status"),
   openSystemSettings: (pane: "fullDiskAccess" | "loginItems" | "storage") =>
     invoke<void>("open_system_settings", { pane }),

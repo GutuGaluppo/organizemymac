@@ -28,6 +28,11 @@ use crate::types::FileEntry;
 
 pub const SAMPLE: u64 = 64 * 1024;
 
+/// A file and the other names it has (hard links).
+type Named = (Candidate, Vec<String>);
+/// Files of one group, each with the hash computed at the current stage.
+type Hashed = Vec<([u8; 32], Named)>;
+
 #[derive(Debug, Clone)]
 struct Candidate {
     path: PathBuf,
@@ -186,7 +191,7 @@ impl DuplicateSearch<'_> {
         let pool = worker_pool();
         let total = stats.after_size;
         let done = AtomicU64::new(0);
-        let sampled: Vec<Vec<([u8; 32], (Candidate, Vec<String>))>> = pool.install(|| {
+        let sampled: Vec<Hashed> = pool.install(|| {
             size_groups
                 .into_par_iter()
                 .map(|group| {
@@ -232,7 +237,7 @@ impl DuplicateSearch<'_> {
         std::thread::scope(|scope| -> AppResult<()> {
             let hashed_ref = &hashed;
             let worker = scope.spawn(move || {
-                let r: Vec<Vec<([u8; 32], (Candidate, Vec<String>))>> = pool.install(|| {
+                let r: Vec<Hashed> = pool.install(|| {
                     full_groups
                         .into_par_iter()
                         .map(|group| {

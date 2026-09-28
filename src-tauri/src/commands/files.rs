@@ -67,7 +67,7 @@ pub fn start_find_files(app: AppHandle, root: String, filter: FileFilter, on_eve
     Ok(start_job(&app, on_event, "find-files", move |state, cancel, emit| {
         let started_at = now_ms();
         let mut finder = FileFinder::new(filter, &root, &state.paths.home, started_at, 2_000);
-        let stats = scan(&scan_options(state, &root), cancel, &mut finder, |e| emit(e))?;
+        let stats = scan(&scan_options(state, &root), cancel, &mut finder, &mut *emit)?;
         let found = finder.finish();
         let scan = scan_result(uuid::Uuid::new_v4().to_string(), started_at, &stats, found.matched_bytes);
         record(state, "largeFiles", &scan)?;
@@ -100,7 +100,7 @@ pub fn start_downloads_scan(app: AppHandle, on_event: Channel<JobEvent<Downloads
                     top.push((e.path.to_path_buf(), e.meta.clone()));
                 }
             };
-            scan(&scan_options(state, &root), cancel, &mut visitor, |e| emit(e))?
+            scan(&scan_options(state, &root), cancel, &mut visitor, &mut *emit)?
         };
         tree.finish();
         let dirs: Vec<String> = top

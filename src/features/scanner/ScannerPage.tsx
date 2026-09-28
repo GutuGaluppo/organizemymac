@@ -8,6 +8,7 @@ import { Button, Card, EmptyState, ErrorNote, PageHeader, ProgressBar, Stat } fr
 import { formatBytes, formatCount, formatDuration, shortPath } from "../../lib/format";
 import type { ScanResult, StorageNode } from "../../types";
 import { RowActions } from "../../components/FileTable";
+import { useNav } from "../../stores/nav";
 
 const MODULE = "scanner";
 
@@ -203,6 +204,7 @@ export function ScannerPage() {
   const job = useJob<ScanResult>(MODULE);
   const start = useJobs((s) => s.start);
   const reset = useJobs((s) => s.reset);
+  const go = useNav((s) => s.go);
   const home = useHome();
   const scan = (root: string) => start(MODULE, "start_scan", { root });
   const r = job.result;
@@ -212,7 +214,15 @@ export function ScannerPage() {
       <PageHeader
         title="Scanner"
         subtitle="Descubra o que ocupa espaço em uma pasta ou no disco inteiro. A análise só lê: nenhum arquivo é alterado."
-        actions={r && job.status !== "running" && <Button onClick={() => reset(MODULE)}>Nova análise</Button>}
+        actions={
+          r &&
+          job.status !== "running" && (
+            <>
+              <Button onClick={() => go("spaceMap")}>Ver no mapa</Button>
+              <Button onClick={() => reset(MODULE)}>Nova análise</Button>
+            </>
+          )
+        }
       />
       <div className="space-y-4 px-8 pb-10">
         {job.status === "failed" && <ErrorNote>{job.error}</ErrorNote>}

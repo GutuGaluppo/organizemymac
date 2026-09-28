@@ -8,6 +8,7 @@ import { LargeFilesPage } from "../features/storage/LargeFilesPage";
 import { DownloadsPage } from "../features/storage/DownloadsPage";
 import { TrashPage } from "../features/storage/TrashPage";
 import { DuplicatesPage } from "../features/duplicates/DuplicatesPage";
+import { SpaceMapPage } from "../features/spacemap/SpaceMapPage";
 import { Onboarding, hasOnboarded } from "../features/onboarding/Onboarding";
 
 export function App() {
@@ -20,6 +21,7 @@ export function App() {
       <main className="min-w-0 flex-1 border-l border-line bg-surface-2">
         {section === "overview" && <OverviewPage />}
         {section === "scanner" && <ScannerPage />}
+        {section === "spaceMap" && <SpaceMapPage />}
         {section === "largeFiles" && <LargeFilesPage />}
         {section === "downloads" && <DownloadsPage />}
         {section === "duplicates" && <DuplicatesPage />}

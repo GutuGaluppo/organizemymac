@@ -34,7 +34,7 @@ pub fn start_duplicate_scan(app: AppHandle, root: String, min_size: u64, on_even
     Ok(start_job(&app, on_event, "duplicates", move |state, cancel, emit| {
         let started_at = now_ms();
         let mut candidates = DuplicateCandidates::new(min_size);
-        let stats = scan(&scan_options(state, &root), cancel, &mut candidates, |e| emit(e))?;
+        let stats = scan(&scan_options(state, &root), cancel, &mut candidates, &mut *emit)?;
         let empty = |stats| ScanResult { id: String::new(), started_at, finished_at: now_ms(), stats, reclaimable_bytes: 0, largest_files: Vec::new(), tree: None };
         if stats.cancelled {
             let result = DuplicatesResult { scan: empty(stats), groups: Vec::new(), total_groups: 0, wasted_bytes: 0, hash_stats: HashStats::default() };
