@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronRight, Download, FileSearch, FolderSearch, HardDrive, Trash2, Usb } from "lucide-react";
+import { ChevronRight, Copy, Download, FileSearch, FolderSearch, HardDrive, Trash2, Usb } from "lucide-react";
 import { api } from "../../lib/ipc";
 import { Card, PageHeader } from "../../components/ui";
 import { formatBytes, formatDateTime, shortPath } from "../../lib/format";
@@ -56,7 +56,7 @@ function Shortcut({ icon, title, text, to }: { icon: ReactNode; title: string; t
   );
 }
 
-const moduleLabel: Record<string, string> = { scanner: "Scanner", largeFiles: "Arquivos grandes", downloads: "Downloads" };
+const moduleLabel: Record<string, string> = { scanner: "Scanner", largeFiles: "Arquivos grandes", downloads: "Downloads", duplicates: "Duplicados" };
 
 export function OverviewPage() {
   const home = useHome();
@@ -85,6 +85,7 @@ export function OverviewPage() {
             <Shortcut to="scanner" icon={<FolderSearch />} title="O que ocupa espaço" text="Analise uma pasta ou o disco inteiro." />
             <Shortcut to="largeFiles" icon={<FileSearch />} title="Arquivos grandes e antigos" text="Os maiores e os esquecidos." />
             <Shortcut to="downloads" icon={<Download />} title="Downloads" text="Instaladores e arquivos que sobraram." />
+            <Shortcut to="duplicates" icon={<Copy />} title="Duplicados" text="Cópias idênticas espalhadas pelo Mac." />
             <Shortcut to="trash" icon={<Trash2 />} title="Lixeira" text="O que já foi removido ainda ocupa espaço." />
           </div>
         </div>

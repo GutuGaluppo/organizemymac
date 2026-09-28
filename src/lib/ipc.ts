@@ -54,6 +54,10 @@ export const api = {
   moveToTrash: (request: { items: { path: string; size: number }[]; scanRoot?: string }) =>
     invoke<OperationOutcome[]>("move_to_trash", { request }),
   pathExists: (path: string) => invoke<boolean>("path_exists", { path }),
+  moveDuplicatesToTrash: (
+    groups: { all: string[]; remove: { path: string; size: number; modifiedAt: number | null }[] }[],
+    scanRoot?: string,
+  ) => invoke<OperationOutcome[]>("move_duplicates_to_trash", { groups, scanRoot }),
 };
 
 export type { ScanResult };

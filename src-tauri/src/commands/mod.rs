@@ -1,6 +1,7 @@
 //! Tauri command layer: the only entry point from the UI. Every command takes typed, validated
 //! arguments; nothing here runs a shell command built from UI input.
 
+pub mod duplicates;
 pub mod files;
 pub mod scan;
 pub mod system;
@@ -25,6 +26,7 @@ pub enum JobEvent<T: Serialize + Clone> {
     Start { job_id: String, root: String },
     Progress(ScanProgress),
     Warning { path: String, message: String },
+    Stage { stage: String, done: u64, total: u64 },
     Complete { result: T },
     Cancelled { result: T },
     Failed { message: String },
@@ -52,6 +54,7 @@ where
                 ScanEvent::Start { root } => JobEvent::Start { job_id: id.clone(), root },
                 ScanEvent::Progress(p) => JobEvent::Progress(p),
                 ScanEvent::Warning { path, message } => JobEvent::Warning { path, message },
+                ScanEvent::Stage { stage, done, total } => JobEvent::Stage { stage, done, total },
             };
             let _ = channel.send(mapped);
         };

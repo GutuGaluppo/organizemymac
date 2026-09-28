@@ -94,6 +94,7 @@ export type JobEvent<T> =
   | { event: "start"; jobId: string; root: string }
   | ({ event: "progress" } & ScanProgress)
   | { event: "warning"; path: string; message: string }
+  | { event: "stage"; stage: string; done: number; total: number }
   | { event: "complete"; result: T }
   | { event: "cancelled"; result: T }
   | { event: "failed"; message: string };
@@ -188,4 +189,24 @@ export type DownloadsResult = ScanResult & {
   folder: string;
   items: DownloadItem[];
   totalBytes: number;
+};
+
+export type DuplicateFile = FileEntry & { hardLinks: string[]; selected: boolean };
+
+export type DuplicateGroup = { hash: string; size: number; files: DuplicateFile[]; wasted: number };
+
+export type HashStats = {
+  candidates: number;
+  afterSize: number;
+  sampleHashed: number;
+  fullHashed: number;
+  bytesHashed: number;
+  hashMs: number;
+};
+
+export type DuplicatesResult = ScanResult & {
+  groups: DuplicateGroup[];
+  totalGroups: number;
+  wastedBytes: number;
+  hashStats: HashStats;
 };

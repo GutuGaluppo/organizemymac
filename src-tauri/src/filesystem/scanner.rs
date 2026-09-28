@@ -112,6 +112,8 @@ pub enum ScanEvent {
     Start { root: String },
     Progress(ScanProgress),
     Warning { path: String, message: String },
+    /// A later phase of a module (hashing, sizing apps…): `done` of `total` units.
+    Stage { stage: String, done: u64, total: u64 },
 }
 
 /// The listing of one folder.

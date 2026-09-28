@@ -7,6 +7,7 @@ import { OverviewPage } from "../features/dashboard/OverviewPage";
 import { LargeFilesPage } from "../features/storage/LargeFilesPage";
 import { DownloadsPage } from "../features/storage/DownloadsPage";
 import { TrashPage } from "../features/storage/TrashPage";
+import { DuplicatesPage } from "../features/duplicates/DuplicatesPage";
 import { Onboarding, hasOnboarded } from "../features/onboarding/Onboarding";
 
 export function App() {
@@ -21,6 +22,7 @@ export function App() {
         {section === "scanner" && <ScannerPage />}
         {section === "largeFiles" && <LargeFilesPage />}
         {section === "downloads" && <DownloadsPage />}
+        {section === "duplicates" && <DuplicatesPage />}
         {section === "trash" && <TrashPage />}
         {section === "settings" && <SettingsPage />}
       </main>

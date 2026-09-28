@@ -11,6 +11,7 @@ export type JobState<T = unknown> = {
   jobId?: string;
   root?: string;
   progress?: ScanProgress;
+  stage?: { stage: string; done: number; total: number };
   warnings: { path: string; message: string }[];
   result?: T;
   error?: string;
@@ -49,6 +50,9 @@ export const useJobs = create<JobsStore>((set, get) => ({
           patch(() => ({ progress }));
           break;
         }
+        case "stage":
+          patch(() => ({ stage: { stage: e.stage, done: e.done, total: e.total } }));
+          break;
         case "warning":
           patch((s) => ({ warnings: s.warnings.length < 200 ? [...s.warnings, { path: e.path, message: e.message }] : s.warnings }));
           break;

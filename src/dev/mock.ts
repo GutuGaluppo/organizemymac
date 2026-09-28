@@ -2,7 +2,7 @@
 // answered with fictitious data so screens can be designed and checked without the Rust core.
 // Never bundled into the app (imported only when `import.meta.env.DEV` and outside Tauri).
 import { mockIPC } from "@tauri-apps/api/mocks";
-import type { DownloadItem, DownloadsResult, FileCategory, FileEntry, FindResult, ScanResult, StorageNode } from "../types";
+import type { DuplicateGroup, DuplicatesResult, DownloadItem, DownloadsResult, FileCategory, FileEntry, FindResult, ScanResult, StorageNode } from "../types";
 
 const HOME = "/Users/demo";
 const now = Date.now();
@@ -240,6 +240,35 @@ registerMock("quick_look", () => null);
 registerMock("path_exists", () => true);
 registerMock("move_to_trash", ({ request }) =>
   (request as { items: { path: string; size: number }[] }).items.map((i) => ({ ...i, ok: !i.path.includes("/Library/"), error: i.path.includes("/Library/") ? "blocked by safety rule" : null })),
+);
+
+const dupGroup = (name: string, size: number, paths: string[], category: FileCategory): DuplicateGroup => ({
+  hash: crypto.randomUUID().replace(/-/g, ""),
+  size,
+  wasted: size * (paths.length - 1),
+  files: paths.map((p, i) => ({ ...fakeFile(`${HOME}/${p}/${name}`, size, 200 - i * 30, category), hardLinks: [], selected: i > 0 })),
+});
+
+registerMock("start_duplicate_scan", ({ root, onEvent }) =>
+  streamJob<DuplicatesResult>(onEvent, root as string, () => {
+    const groups = [
+      dupGroup("Viagem Patagônia 4K.mov", 18.4e9, ["Movies", "Desktop/Backup vídeos"], "video"),
+      dupGroup("Backup iPhone 2024.zip", 6.3e9, ["Documents", "Downloads"], "archive"),
+      dupGroup("ubuntu-24.04-desktop-arm64.iso", 3.4e9, ["Downloads", "Projects/vm-images", "Desktop"], "diskImage"),
+      dupGroup("IMG_4021.HEIC", 3.1e6, ["Pictures/2024", "Desktop/fotos", "Downloads"], "image"),
+      dupGroup("contrato-assinado.pdf", 1.2e6, ["Documents/Contratos", "Downloads"], "document"),
+    ];
+    return {
+      ...baseScan(root as string),
+      groups,
+      totalGroups: groups.length,
+      wastedBytes: groups.reduce((s, g) => s + g.wasted, 0),
+      hashStats: { candidates: 8307, afterSize: 2890, sampleHashed: 2890, fullHashed: 1616, bytesHashed: 8.9e9, hashMs: 4940 },
+    };
+  }, 1600),
+);
+registerMock("move_duplicates_to_trash", ({ groups }) =>
+  (groups as { remove: { path: string; size: number }[] }[]).flatMap((g) => g.remove.map((r) => ({ path: r.path, size: r.size, ok: true, error: null }))),
 );
 
 export function install() {
