@@ -3,8 +3,8 @@
 use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 
-use organizamymac_lib::filesystem::scanner::{prompting_locations, ScanEvent, ScanOptions};
-use organizamymac_lib::smart_care::run;
+use organizemymac_lib::filesystem::scanner::{prompting_locations, ScanEvent, ScanOptions};
+use organizemymac_lib::smart_care::run;
 
 fn main() {
     let home = dirs::home_dir().unwrap();

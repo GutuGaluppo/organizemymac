@@ -2,8 +2,8 @@
 use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 
-use organizamymac_lib::applications::{list_apps, running_executables};
-use organizamymac_lib::updates::{check, sources, UpdateSource};
+use organizemymac_lib::applications::{list_apps, running_executables};
+use organizemymac_lib::updates::{check, sources, UpdateSource};
 
 fn main() {
     let home = dirs::home_dir().unwrap();

@@ -278,7 +278,7 @@ function PhotosMode() {
           </Button>
         ) : (
           <div className="flex items-center gap-3 text-[12.5px] text-ink-2">
-            Acesso negado. Libere o OrganizaMyMac em Ajustes do Sistema → Privacidade e Segurança → Fotos.
+            Acesso negado. Libere o OrganizeMyMac em Ajustes do Sistema → Privacidade e Segurança → Fotos.
             <Button size="sm" onClick={() => api.openSystemSettings("photos")}>
               Abrir Ajustes do Sistema
             </Button>

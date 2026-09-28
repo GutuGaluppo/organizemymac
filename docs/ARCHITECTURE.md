@@ -49,8 +49,8 @@ parent-first, so a single reverse pass computes totals. The Space Map queries it
 
 ## Data (`db/`)
 
-SQLite in `~/Library/Application Support/dev.galuppo.OrganizaMyMac`: scan history, operation log,
-ignore list, settings and local-only metrics. Logs rotate daily in `~/Library/Logs/dev.galuppo.OrganizaMyMac`.
+SQLite in `~/Library/Application Support/dev.galuppo.OrganizeMyMac`: scan history, operation log,
+ignore list, settings and local-only metrics. Logs rotate daily in `~/Library/Logs/dev.galuppo.OrganizeMyMac`.
 No telemetry.
 
 ## Development preview
@@ -64,7 +64,7 @@ screens can be checked in a browser. It is never part of a production build.
 for the menu bar, processes for the Performance screen. Battery comes from `pmset -g batt`, cached
 for 20 s. Processes are grouped by their outermost `.app` bundle so helpers count toward their app;
 "Quit" uses `NSRunningApplication.terminate` on the app's regular process (same as the app's Quit
-menu item) and is refused for system processes, other users' processes and OrganizaMyMac itself.
+menu item) and is refused for system processes, other users' processes and OrganizeMyMac itself.
 
 The menu bar thread runs with the *background* QoS class: metrics every 5 s, processes every 30 s,
 and it stops as soon as the item is turned off. With the item on, closing the window hides it; the
@@ -73,7 +73,7 @@ Dock icon or the menu bring it back.
 ## Swift helper (`native/macos-helper`)
 
 A small command-line tool for what Apple frameworks do better than Rust bindings: Vision feature
-prints and PhotoKit. `build.rs` compiles it with `swiftc` into `src-tauri/binaries/organiza-helper-<target>`
+prints and PhotoKit. `build.rs` compiles it with `swiftc` into `src-tauri/binaries/organize-helper-<target>`
 and Tauri ships it as a sidecar next to the app's executable. The Rust core starts it with fixed
 arguments and JSON on stdin; progress comes back as JSON lines on stderr and the result on stdout.
 The job's cancel flag kills the process. The helper never deletes files; Photos assets are only

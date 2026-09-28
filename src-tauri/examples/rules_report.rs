@@ -1,5 +1,5 @@
 //! Read-only evaluation of the cleanup rules: `cargo run --release --example rules_report`.
-use organizamymac_lib::cleanup::rules::{builtin_rules, evaluate, running_apps};
+use organizemymac_lib::cleanup::rules::{builtin_rules, evaluate, running_apps};
 
 fn main() {
     let home = dirs::home_dir().unwrap();

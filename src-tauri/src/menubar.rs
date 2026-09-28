@@ -15,7 +15,7 @@ use tauri::{AppHandle, Manager, Wry};
 use crate::processes::{by_app, HealthMonitor};
 use crate::state::AppState;
 
-const TRAY_ID: &str = "organizamymac";
+const TRAY_ID: &str = "organizemymac";
 const TOP_APPS: usize = 5;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
@@ -88,8 +88,8 @@ fn build(app: &AppHandle) -> tauri::Result<(TrayIcon<Wry>, Arc<Items>)> {
         apps: (0..TOP_APPS).map(|i| text(&format!("app{i}"))).collect::<tauri::Result<_>>()?,
     };
     let header = MenuItem::with_id(app, "apps-header", "Mais memória", false, None::<&str>)?;
-    let open = MenuItem::with_id(app, "open", "Abrir OrganizaMyMac", true, None::<&str>)?;
-    let quit = MenuItem::with_id(app, "quit", "Encerrar OrganizaMyMac", true, Some("CmdOrCtrl+Q"))?;
+    let open = MenuItem::with_id(app, "open", "Abrir OrganizeMyMac", true, None::<&str>)?;
+    let quit = MenuItem::with_id(app, "quit", "Encerrar OrganizeMyMac", true, Some("CmdOrCtrl+Q"))?;
     let sep = || PredefinedMenuItem::separator(app);
     let mut entries: Vec<&dyn tauri::menu::IsMenuItem<Wry>> = vec![&items.cpu, &items.memory, &items.disk, &items.battery, &items.uptime];
     let s1 = sep()?;
@@ -107,7 +107,7 @@ fn build(app: &AppHandle) -> tauri::Result<(TrayIcon<Wry>, Arc<Items>)> {
     let tray = TrayIconBuilder::with_id(TRAY_ID)
         .icon(Image::from_bytes(include_bytes!("../icons/tray-template.png"))?)
         .icon_as_template(true)
-        .tooltip("OrganizaMyMac")
+        .tooltip("OrganizeMyMac")
         .menu(&menu)
         .show_menu_on_left_click(true)
         .on_menu_event(|app, event| match event.id().as_ref() {

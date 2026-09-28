@@ -25,7 +25,7 @@ pub enum SafetyViolation {
     SymlinkEscape,
     #[error("the item is on a read-only volume")]
     ReadOnlyVolume,
-    #[error("the item belongs to OrganizaMyMac")]
+    #[error("the item belongs to OrganizeMyMac")]
     OwnFiles,
     #[error("the item is in your ignore list")]
     Ignored,

@@ -1,10 +1,10 @@
-// organiza-helper: non-privileged native operations for OrganizaMyMac that are cleaner with Apple
+// organize-helper: non-privileged native operations for OrganizeMyMac that are cleaner with Apple
 // frameworks than from Rust. Packaged as a Tauri sidecar and started by the Rust core only.
 //
-//   organiza-helper similar          stdin: {"paths": [...], "threshold": 0.5, "hashDistance": 12}
+//   organize-helper similar          stdin: {"paths": [...], "threshold": 0.5, "hashDistance": 12}
 //                                    stdout: one JSON object with the groups; stderr: JSON progress lines
-//   organiza-helper photos-status    stdout: {"status": "authorized" | "denied" | ...}
-//   organiza-helper photos-similar   stdin: {"threshold": 0.5, "hashDistance": 12, "limit": 20000}
+//   organize-helper photos-status    stdout: {"status": "authorized" | "denied" | ...}
+//   organize-helper photos-similar   stdin: {"threshold": 0.5, "hashDistance": 12, "limit": 20000}
 //
 // The helper never deletes files. Photos assets are only deleted through PhotoKit, which shows
 // the system confirmation and moves them to Recently Deleted (`photos-delete`).
@@ -334,8 +334,8 @@ case "photos-similar": photosSimilar()
 case "photos-delete": photosDelete()
 case "photos-thumbnail": photosThumbnail()
 case "evict": evict()
-case "--version": print("organiza-helper 1")
+case "--version": print("organize-helper 1")
 default:
-    FileHandle.standardError.write("usage: organiza-helper similar|photos-status [--request]|photos-similar|photos-delete\n".data(using: .utf8)!)
+    FileHandle.standardError.write("usage: organize-helper similar|photos-status [--request]|photos-similar|photos-delete\n".data(using: .utf8)!)
     exit(64)
 }

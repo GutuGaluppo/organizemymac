@@ -8,7 +8,7 @@ exists in the repository.
 
 Some maintenance tasks need root: flushing the DNS cache (`dscacheutil -flushcache`, `killall -HUP
 mDNSResponder`), rebuilding the Spotlight index (`mdutil -E`), and deleting local Time Machine
-snapshots (`tmutil deletelocalsnapshots`). OrganizaMyMac itself must never run as root, and the UI must
+snapshots (`tmutil deletelocalsnapshots`). OrganizeMyMac itself must never run as root, and the UI must
 never run commands.
 
 ## Proposed design
@@ -18,7 +18,7 @@ never run commands.
   Login Items; the app only opens that pane.
 - The app talks to it over **XPC** (`NSXPCConnection` with a Mach service). The daemon accepts a
   connection only if the client's code signature satisfies a fixed requirement: same Team ID,
-  bundle id `dev.galuppo.OrganizaMyMac`, hardened runtime (`setCodeSigningRequirement`, macOS 13+).
+  bundle id `dev.galuppo.OrganizeMyMac`, hardened runtime (`setCodeSigningRequirement`, macOS 13+).
 - The protocol is a closed enum of operations, never a command string:
 
   | Operation | Implementation | Input |

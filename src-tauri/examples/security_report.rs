@@ -1,6 +1,6 @@
 //! Read-only security audit: `cargo run --release --example security_report`.
-use organizamymac_lib::applications::find_bundles;
-use organizamymac_lib::security::{audit_apps, persistence};
+use organizemymac_lib::applications::find_bundles;
+use organizemymac_lib::security::{audit_apps, persistence};
 
 fn main() {
     let home = dirs::home_dir().unwrap();

@@ -1,16 +1,16 @@
-# OrganizaMyMac — IMPLEMENTATION.md
+# OrganizeMyMac — IMPLEMENTATION.md
 
 **Date:** 2026-09-28  
-**Product name:** OrganizaMyMac  
+**Product name:** OrganizeMyMac  
 **Goal:** build a native macOS utility inspired by the category of tools offered by CleanMyMac, with an initial focus on storage analysis, safe cleanup, application management, and system monitoring.
 
-> Core principle: OrganizaMyMac must be **conservative when removing data**. Whenever possible, files should be moved to Trash instead of being permanently deleted. The app must clearly explain what will be removed and allow the user to review all destructive actions before execution.
+> Core principle: OrganizeMyMac must be **conservative when removing data**. Whenever possible, files should be moved to Trash instead of being permanently deleted. The app must clearly explain what will be removed and allow the user to review all destructive actions before execution.
 
 ---
 
 # 1. Product Scope
 
-OrganizaMyMac will be divided into independent modules:
+OrganizeMyMac will be divided into independent modules:
 
 1. **Dashboard / Mac Health**
 2. **Storage Scanner**
@@ -41,7 +41,7 @@ The highest-value first version is a fast, visual, and trustworthy scanner that 
 
 ## Recommendation
 
-Initially distribute OrganizaMyMac as:
+Initially distribute OrganizeMyMac as:
 
 - `.dmg`
 - signed with **Developer ID Application**
@@ -61,7 +61,7 @@ Even outside the Mac App Store, macOS privacy and security protections still app
 
 ## Full Disk Access
 
-OrganizaMyMac should remain partially functional without Full Disk Access.
+OrganizeMyMac should remain partially functional without Full Disk Access.
 
 Features that require broader filesystem visibility should clearly explain why the permission is needed.
 
@@ -69,7 +69,7 @@ Users must grant this permission manually under:
 
 `System Settings → Privacy & Security → Full Disk Access`
 
-OrganizaMyMac must never attempt to bypass:
+OrganizeMyMac must never attempt to bypass:
 
 - TCC
 - SIP
@@ -210,7 +210,7 @@ type CleanupCandidate = {
 
 # 6. Safety Layer
 
-This is one of the most important parts of OrganizaMyMac.
+This is one of the most important parts of OrganizeMyMac.
 
 A cleanup module must never simply return paths and delete them immediately.
 
@@ -244,7 +244,7 @@ Automatically block destructive operations targeting:
 - `/Library` unless the rule is explicitly supported and reviewed
 - read-only volumes
 - symlinks escaping the selected scan root
-- files belonging to OrganizaMyMac while it is running
+- files belonging to OrganizeMyMac while it is running
 
 Additional rules:
 
@@ -260,7 +260,7 @@ Additional rules:
 
 # 7. Scanner Engine
 
-The scanner will be the foundation of most OrganizaMyMac features.
+The scanner will be the foundation of most OrganizeMyMac features.
 
 ## Pipeline
 
@@ -293,7 +293,7 @@ scan:cancelled
 
 Logical file size does not always equal physical disk usage.
 
-OrganizaMyMac should account for:
+OrganizeMyMac should account for:
 
 - hard links
 - sparse files
@@ -649,7 +649,7 @@ Suggested refresh interval:
 1–2 seconds
 ```
 
-Reduce refresh frequency when the OrganizaMyMac window is hidden.
+Reduce refresh frequency when the OrganizeMyMac window is hidden.
 
 ---
 
@@ -925,7 +925,7 @@ Updating third-party applications safely requires careful handling of:
 
 # 27. Malware Scanner
 
-Treat malware protection as a separate product track inside OrganizaMyMac.
+Treat malware protection as a separate product track inside OrganizeMyMac.
 
 A serious scanner requires:
 
@@ -942,7 +942,7 @@ A serious scanner requires:
 
 For real-time protection, macOS provides Endpoint Security, which requires specific entitlements and a System Extension.
 
-Do not claim that users are "protected" until OrganizaMyMac has a trustworthy security engine.
+Do not claim that users are "protected" until OrganizeMyMac has a trustworthy security engine.
 
 ---
 
@@ -962,7 +962,7 @@ This should be presented as a security audit, not as antivirus protection.
 # 28. Suggested Repository Structure
 
 ```text
-organizamymac/
+organizemymac/
 ├── src/
 │   ├── app/
 │   ├── components/
@@ -1054,7 +1054,7 @@ A user-selected folder can be scanned without freezing the UI and without modify
 
 Users can identify and manually remove large or unnecessary files.
 
-**At this stage, OrganizaMyMac is already a usable product.**
+**At this stage, OrganizeMyMac is already a usable product.**
 
 ---
 
@@ -1110,7 +1110,7 @@ App removal provides a complete preview of associated files and protects shared 
 
 ## MVP 1.0
 
-**M0–M4 form the recommended first public release of OrganizaMyMac.**
+**M0–M4 form the recommended first public release of OrganizeMyMac.**
 
 ---
 
@@ -1203,7 +1203,7 @@ Only proceed after a dedicated security and permissions review.
 - malware signature service
 - Endpoint Security prototype
 
-This milestone must not block the rest of the OrganizaMyMac roadmap.
+This milestone must not block the rest of the OrganizeMyMac roadmap.
 
 ---
 
@@ -1319,13 +1319,13 @@ module errors
 last scan
 ```
 
-These values can power the OrganizaMyMac dashboard without sending user data to external servers.
+These values can power the OrganizeMyMac dashboard without sending user data to external servers.
 
 ---
 
 # 33. MVP Success Criteria
 
-OrganizaMyMac does not need to be a complete CleanMyMac replacement in the first release.
+OrganizeMyMac does not need to be a complete CleanMyMac replacement in the first release.
 
 It needs to answer three questions extremely well:
 
@@ -1341,7 +1341,7 @@ It needs to answer three questions extremely well:
 
 **Which applications and leftover files are wasting storage?**
 
-If those three workflows are fast, clear, attractive, and trustworthy, OrganizaMyMac already has a strong product foundation.
+If those three workflows are fast, clear, attractive, and trustworthy, OrganizeMyMac already has a strong product foundation.
 
 ---
 
@@ -1382,7 +1382,7 @@ The dashboard should be built on top of real data produced by the scanner.
 
 # 35. Product Development Principle
 
-OrganizaMyMac should differentiate itself through three characteristics:
+OrganizeMyMac should differentiate itself through three characteristics:
 
 ## Transparency
 
@@ -1399,7 +1399,7 @@ Scanning millions of filesystem entries must not make the Mac feel slower.
 The ideal experience is:
 
 ```text
-Open OrganizaMyMac
+Open OrganizeMyMac
       ↓
 Scan
       ↓

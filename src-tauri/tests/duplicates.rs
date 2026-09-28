@@ -3,10 +3,10 @@ mod common;
 use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 
-use organizamymac_lib::duplicates::{DuplicateCandidates, DuplicateSearch};
-use organizamymac_lib::filesystem::scanner::{scan, ScanOptions};
+use organizemymac_lib::duplicates::{DuplicateCandidates, DuplicateSearch};
+use organizemymac_lib::filesystem::scanner::{scan, ScanOptions};
 
-fn find(root: &std::path::Path, min_size: u64) -> (Vec<organizamymac_lib::duplicates::DuplicateGroup>, organizamymac_lib::duplicates::HashStats) {
+fn find(root: &std::path::Path, min_size: u64) -> (Vec<organizemymac_lib::duplicates::DuplicateGroup>, organizemymac_lib::duplicates::HashStats) {
     let cancel = Arc::new(AtomicBool::new(false));
     let mut candidates = DuplicateCandidates::new(min_size);
     scan(&ScanOptions { root: root.to_path_buf(), ..Default::default() }, &cancel, &mut candidates, |_| {}).unwrap();

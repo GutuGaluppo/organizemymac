@@ -69,7 +69,7 @@ export function OverviewPage() {
       <PageHeader
         title="Visão geral"
         subtitle={
-          metrics?.bytes_reclaimed_total ? `Você já liberou ${formatBytes(metrics.bytes_reclaimed_total)} com o OrganizaMyMac.` : "Espaço nos discos e atalhos para começar."
+          metrics?.bytes_reclaimed_total ? `Você já liberou ${formatBytes(metrics.bytes_reclaimed_total)} com o OrganizeMyMac.` : "Espaço nos discos e atalhos para começar."
         }
       />
       <div className="space-y-6 px-8 pb-10">

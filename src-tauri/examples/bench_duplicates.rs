@@ -4,8 +4,8 @@ use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 use std::time::Instant;
 
-use organizamymac_lib::duplicates::{DuplicateCandidates, DuplicateSearch};
-use organizamymac_lib::filesystem::scanner::{prompting_locations, scan, ScanOptions};
+use organizemymac_lib::duplicates::{DuplicateCandidates, DuplicateSearch};
+use organizemymac_lib::filesystem::scanner::{prompting_locations, scan, ScanOptions};
 
 fn main() {
     let root: std::path::PathBuf = std::env::args().nth(1).map(Into::into).unwrap_or_else(|| dirs::home_dir().unwrap());

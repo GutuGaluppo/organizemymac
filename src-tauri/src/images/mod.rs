@@ -44,10 +44,10 @@ impl Sensitivity {
 /// Path of the helper next to the app's executable (Tauri copies sidecars there), or the build
 /// output when running tests and examples.
 pub fn helper_path() -> PathBuf {
-    let beside = std::env::current_exe().ok().and_then(|e| e.parent().map(|p| p.join("organiza-helper")));
+    let beside = std::env::current_exe().ok().and_then(|e| e.parent().map(|p| p.join("organize-helper")));
     match beside {
         Some(p) if p.exists() => p,
-        _ => Path::new(env!("CARGO_MANIFEST_DIR")).join(concat!("binaries/organiza-helper-", env!("ORGANIZA_TARGET_TRIPLE"))),
+        _ => Path::new(env!("CARGO_MANIFEST_DIR")).join(concat!("binaries/organize-helper-", env!("ORGANIZE_TARGET_TRIPLE"))),
     }
 }
 

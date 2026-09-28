@@ -1,6 +1,6 @@
 # Safety
 
-OrganizaMyMac is conservative when removing data. Every cleanup follows:
+OrganizeMyMac is conservative when removing data. Every cleanup follows:
 
 ```text
 scanner → classifier → cleanup plan → safety validation → user review → Trash (or delete)
@@ -19,7 +19,7 @@ scanner → classifier → cleanup plan → safety validation → user review �
 | Essential folders themselves | `/`, `/Applications`, `/Users`, `/Volumes/<disk>`, the home folder, `~/Library`, `~/Documents`, `~/.Trash`… (their contents are fine) |
 | Leaving the scanned folder | the item must still be inside the scan root after resolving symlinks in its parents; a path through a symlink that points outside is a *symlink escape* |
 | Read-only volumes | checked with `statfs` |
-| OrganizaMyMac's own files | its app bundle, database and logs |
+| OrganizeMyMac's own files | its app bundle, database and logs |
 | The ignore list | anything the user chose to ignore |
 
 The resolved path keeps the last component as is: removing a symlink removes the link, never its

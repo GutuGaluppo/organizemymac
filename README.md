@@ -1,4 +1,4 @@
-# OrganizaMyMac
+# OrganizeMyMac
 
 Utilitário nativo para macOS que mostra o que ocupa espaço no Mac e ajuda a remover o que não é
 necessário com segurança: arquivos grandes e antigos, Downloads, duplicados, mapa de espaço e
@@ -100,4 +100,4 @@ Distribuir para outras pessoas exige assinatura Developer ID, Hardened Runtime (
 ## Privacidade
 
 Sem telemetria. O app só acessa a rede quando você pede para verificar atualizações: consulta a App Store (identificador de cada app da App Store) e o endereço de atualização HTTPS que cada app declara. Histórico de análises, registro de operações e estatísticas ficam só no Mac, em
-`~/Library/Application Support/dev.galuppo.OrganizaMyMac`.
+`~/Library/Application Support/dev.galuppo.OrganizeMyMac`.

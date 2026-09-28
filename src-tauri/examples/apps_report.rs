@@ -5,8 +5,8 @@ use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 use std::time::Instant;
 
-use organizamymac_lib::applications::leftovers::{find_for_app, find_orphans, installed_bundle_ids, AppIdentity};
-use organizamymac_lib::applications::{list_apps, running_executables};
+use organizemymac_lib::applications::leftovers::{find_for_app, find_orphans, installed_bundle_ids, AppIdentity};
+use organizemymac_lib::applications::{list_apps, running_executables};
 
 fn main() {
     let home = dirs::home_dir().unwrap();

@@ -1,6 +1,6 @@
 # Permissions
 
-OrganizaMyMac never tries to bypass TCC, SIP, the sandbox or any macOS protection, and never reads
+OrganizeMyMac never tries to bypass TCC, SIP, the sandbox or any macOS protection, and never reads
 or edits `TCC.db`.
 
 ## Full Disk Access (optional)

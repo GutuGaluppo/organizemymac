@@ -3,12 +3,12 @@ mod common;
 use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 
-use organizamymac_lib::filesystem::scanner::{scan, ScanEvent, ScanOptions};
-use organizamymac_lib::storage::largest::LargestFiles;
-use organizamymac_lib::storage::tree::StorageTree;
-use organizamymac_lib::storage::Fanout;
+use organizemymac_lib::filesystem::scanner::{scan, ScanEvent, ScanOptions};
+use organizemymac_lib::storage::largest::LargestFiles;
+use organizemymac_lib::storage::tree::StorageTree;
+use organizemymac_lib::storage::Fanout;
 
-fn run(opts: &ScanOptions) -> (organizamymac_lib::filesystem::scanner::ScanStats, StorageTree, Vec<organizamymac_lib::types::FileEntry>, Vec<ScanEvent>) {
+fn run(opts: &ScanOptions) -> (organizemymac_lib::filesystem::scanner::ScanStats, StorageTree, Vec<organizemymac_lib::types::FileEntry>, Vec<ScanEvent>) {
     let cancel = Arc::new(AtomicBool::new(false));
     let mut tree = StorageTree::new(&opts.root, 1_000_000);
     let mut largest = LargestFiles::new(5);
@@ -81,7 +81,7 @@ fn cancellation_stops_quickly() {
     let f = common::build();
     let cancel = Arc::new(AtomicBool::new(true));
     let mut count = 0;
-    let stats = scan(&ScanOptions { root: f.root.clone(), ..Default::default() }, &cancel, &mut |_: &organizamymac_lib::filesystem::scanner::VisitEntry| count += 1, |_| {}).unwrap();
+    let stats = scan(&ScanOptions { root: f.root.clone(), ..Default::default() }, &cancel, &mut |_: &organizemymac_lib::filesystem::scanner::VisitEntry| count += 1, |_| {}).unwrap();
     assert!(stats.cancelled);
     assert!(count <= 1);
 }
@@ -90,9 +90,9 @@ fn cancellation_stops_quickly() {
 fn missing_root_is_an_error() {
     let f = common::build();
     let cancel = Arc::new(AtomicBool::new(false));
-    let res = scan(&ScanOptions { root: f.root.join("nope"), ..Default::default() }, &cancel, &mut |_: &organizamymac_lib::filesystem::scanner::VisitEntry| {}, |_| {});
+    let res = scan(&ScanOptions { root: f.root.join("nope"), ..Default::default() }, &cancel, &mut |_: &organizemymac_lib::filesystem::scanner::VisitEntry| {}, |_| {});
     assert!(res.is_err());
-    let file = scan(&ScanOptions { root: f.root.join("big/video.mov"), ..Default::default() }, &cancel, &mut |_: &organizamymac_lib::filesystem::scanner::VisitEntry| {}, |_| {});
+    let file = scan(&ScanOptions { root: f.root.join("big/video.mov"), ..Default::default() }, &cancel, &mut |_: &organizemymac_lib::filesystem::scanner::VisitEntry| {}, |_| {});
     assert!(file.is_err());
 }
 
@@ -112,12 +112,12 @@ fn scans_started_inside_the_pool_do_not_deadlock() {
     let f = common::build();
     let roots: Vec<_> = (0..24).map(|_| f.root.clone()).collect();
     // More concurrent scans than pool threads, each started from a pool thread.
-    let totals: Vec<u64> = organizamymac_lib::filesystem::worker_pool().install(|| {
+    let totals: Vec<u64> = organizemymac_lib::filesystem::worker_pool().install(|| {
         roots
             .par_iter()
             .map(|r| {
                 let cancel = Arc::new(AtomicBool::new(false));
-                scan(&ScanOptions { root: r.clone(), ..Default::default() }, &cancel, &mut |_: &organizamymac_lib::filesystem::scanner::VisitEntry| {}, |_| {})
+                scan(&ScanOptions { root: r.clone(), ..Default::default() }, &cancel, &mut |_: &organizemymac_lib::filesystem::scanner::VisitEntry| {}, |_| {})
                     .unwrap()
                     .bytes_scanned
             })

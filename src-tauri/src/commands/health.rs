@@ -33,7 +33,7 @@ pub async fn quit_application(app_path: String) -> AppResult<u32> {
     }
     let own = std::env::current_exe().ok().and_then(|e| crate::processes::app_bundle_of(&e));
     if own.as_deref() == Some(path.as_path()) {
-        return Err(AppError::Invalid("use Quit in the menu to close OrganizaMyMac".into()));
+        return Err(AppError::Invalid("use Quit in the menu to close OrganizeMyMac".into()));
     }
     tauri::async_runtime::spawn_blocking(move || quit_app(&path))
         .await

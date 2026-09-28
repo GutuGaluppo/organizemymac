@@ -42,7 +42,7 @@ pub fn worker_pool() -> Arc<rayon::ThreadPool> {
         Arc::new(
             rayon::ThreadPoolBuilder::new()
                 .num_threads(threads)
-                .thread_name(|i| format!("organiza-worker-{i}"))
+                .thread_name(|i| format!("organize-worker-{i}"))
                 .start_handler(|_| unsafe {
                     libc::pthread_set_qos_class_self_np(libc::qos_class_t::QOS_CLASS_UTILITY, 0);
                 })

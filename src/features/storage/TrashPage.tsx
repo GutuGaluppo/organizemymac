@@ -93,7 +93,7 @@ export function TrashPage() {
               <div className="font-medium">O macOS não deixa o app ver o conteúdo da Lixeira</div>
               <p className="mt-1 text-[12.5px] text-ink-2">
                 Com Acesso Total ao Disco, o app mostra o que há na Lixeira e quanto espaço ocupa antes de esvaziar. Sem ele, você pode pedir
-                ao Finder para esvaziar (o macOS pergunta se o OrganizaMyMac pode controlar o Finder).
+                ao Finder para esvaziar (o macOS pergunta se o OrganizeMyMac pode controlar o Finder).
               </p>
             </div>
             <FullDiskAccessRow />

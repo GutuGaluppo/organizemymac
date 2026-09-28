@@ -1,6 +1,6 @@
 //! App update detection (spec §26). v1: installed versions. v2: Sparkle-enabled apps (their
 //! appcast feed from Info.plist). v3: trusted external version sources — the app's own HTTPS
-//! appcast and Apple's public App Store lookup. OrganizaMyMac only reports; it never downloads or
+//! appcast and Apple's public App Store lookup. OrganizeMyMac only reports; it never downloads or
 //! installs updates (signatures, sources and architectures are the app's own updater's job).
 
 use std::cmp::Ordering;
@@ -114,7 +114,7 @@ fn agent() -> ureq::Agent {
         .timeout(Duration::from_secs(10))
         .https_only(true)
         .redirects(3)
-        .user_agent(concat!("OrganizaMyMac/", env!("CARGO_PKG_VERSION"), " (update check)"))
+        .user_agent(concat!("OrganizeMyMac/", env!("CARGO_PKG_VERSION"), " (update check)"))
         .build()
 }
 

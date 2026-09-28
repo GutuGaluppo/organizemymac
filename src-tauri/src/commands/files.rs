@@ -122,7 +122,7 @@ pub async fn empty_trash(app: AppHandle) -> AppResult<Vec<OperationOutcome>> {
 }
 
 /// Without Full Disk Access the app cannot read the Trash; Finder can empty it (macOS asks the
-/// user to allow OrganizaMyMac to control Finder the first time).
+/// user to allow OrganizeMyMac to control Finder the first time).
 #[tauri::command]
 pub async fn empty_trash_with_finder() -> AppResult<()> {
     let status = tauri::async_runtime::spawn_blocking(|| {

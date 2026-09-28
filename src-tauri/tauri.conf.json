@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "OrganizaMyMac",
+  "productName": "OrganizeMyMac",
   "version": "0.1.0",
-  "identifier": "dev.galuppo.OrganizaMyMac",
+  "identifier": "dev.galuppo.OrganizeMyMac",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1480",
@@ -13,7 +13,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "OrganizaMyMac",
+        "title": "OrganizeMyMac",
         "width": 1180,
         "height": 760,
         "minWidth": 920,
@@ -58,7 +58,7 @@
       "hardenedRuntime": true
     },
     "externalBin": [
-      "binaries/organiza-helper"
+      "binaries/organize-helper"
     ]
   }
 }

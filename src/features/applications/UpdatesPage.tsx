@@ -59,7 +59,7 @@ export function UpdatesPage() {
     <div className="h-full overflow-y-auto">
       <PageHeader
         title="Atualizações"
-        subtitle="Versões instaladas e, se você pedir, as mais recentes da App Store e do atualizador de cada app. O OrganizaMyMac não baixa nem instala nada: ele abre o app ou a App Store para você atualizar por lá."
+        subtitle="Versões instaladas e, se você pedir, as mais recentes da App Store e do atualizador de cada app. O OrganizeMyMac não baixa nem instala nada: ele abre o app ou a App Store para você atualizar por lá."
         actions={
           <Button variant="primary" icon={<Globe className="size-3.5" />} busy={running} onClick={() => setAsk(true)}>
             Verificar online…

@@ -30,7 +30,7 @@ function MenuBarSection() {
     <div className="space-y-3">
       <label className="flex items-center gap-2 text-[12.5px]">
         <input type="checkbox" className="accent-[var(--accent)]" checked={data.enabled} onChange={(e) => save({ ...data, enabled: e.target.checked })} />
-        Mostrar o OrganizaMyMac na barra de menus
+        Mostrar o OrganizeMyMac na barra de menus
       </label>
       <div className="flex items-center gap-2 text-[12.5px]">
         <span className="text-ink-2">Ao lado do ícone:</span>
@@ -59,7 +59,7 @@ function IgnoreList() {
   const home = useHome();
   const { data } = useQuery({ queryKey: ["ignore"], queryFn: api.ignoreList });
   const add = async () => {
-    const dir = await open({ directory: true, title: "Pasta que o OrganizaMyMac deve ignorar" });
+    const dir = await open({ directory: true, title: "Pasta que o OrganizeMyMac deve ignorar" });
     if (typeof dir === "string") {
       await api.addToIgnoreList(dir, "adicionada em Ajustes");
       qc.invalidateQueries({ queryKey: ["ignore"] });
@@ -159,7 +159,7 @@ export function SettingsPage() {
         </Section>
         {info && (
           <div className="space-y-0.5 text-[11.5px] text-ink-3 selectable">
-            <div>OrganizaMyMac {info.version}</div>
+            <div>OrganizeMyMac {info.version}</div>
             <div>Dados: {shortPath(info.dataDir, home)}</div>
             <div>Registros: {shortPath(info.logDir, home)}</div>
           </div>

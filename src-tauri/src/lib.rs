@@ -33,7 +33,7 @@ static LOG_GUARD: OnceLock<WorkerGuard> = OnceLock::new();
 fn init_logging(log_dir: &std::path::Path) {
     let appender = tracing_appender::rolling::Builder::new()
         .rotation(tracing_appender::rolling::Rotation::DAILY)
-        .filename_prefix("organizamymac")
+        .filename_prefix("organizemymac")
         .filename_suffix("log")
         .max_log_files(7)
         .build(log_dir);
@@ -45,7 +45,7 @@ fn init_logging(log_dir: &std::path::Path) {
     let _ = tracing_subscriber::fmt().with_writer(writer).with_ansi(false).with_env_filter(filter).try_init();
 }
 
-/// Paths that belong to OrganizaMyMac itself and must never be removed while it runs.
+/// Paths that belong to OrganizeMyMac itself and must never be removed while it runs.
 fn own_paths(paths: &AppPaths) -> Vec<PathBuf> {
     let mut own = vec![paths.data_dir.clone(), paths.log_dir.clone()];
     if let Ok(exe) = std::env::current_exe() {
@@ -66,7 +66,7 @@ fn setup(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     tracing::info!(version = %app.package_info().version, "starting");
 
     let paths = AppPaths { home: home.clone(), data_dir: data_dir.clone(), log_dir };
-    let db = Db::open(&data_dir.join("organizamymac.sqlite"))?;
+    let db = Db::open(&data_dir.join("organizemymac.sqlite"))?;
     let policy = SafetyPolicy::system(&home, own_paths(&paths));
     let state = AppState::new(paths, db, policy)?;
     let menu_bar = menubar::MenuBar::new(menubar::load_settings(&state));
@@ -149,7 +149,7 @@ pub fn run() {
             }
         })
         .build(tauri::generate_context!())
-        .expect("error while building OrganizaMyMac")
+        .expect("error while building OrganizeMyMac")
         .run(|app, event| match event {
             tauri::RunEvent::ExitRequested { .. } => app.state::<AppState>().jobs.cancel_all(),
             // Clicking the Dock icon brings the window back.

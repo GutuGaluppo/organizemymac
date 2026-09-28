@@ -3,8 +3,8 @@
 <plist version="1.0">
 <dict>
   <key>NSPhotoLibraryUsageDescription</key>
-  <string>O OrganizaMyMac procura fotos parecidas na sua biblioteca do Fotos. Nada é apagado sem a sua confirmação no próprio Fotos.</string>
+  <string>O OrganizeMyMac procura fotos parecidas na sua biblioteca do Fotos. Nada é apagado sem a sua confirmação no próprio Fotos.</string>
   <key>NSAppleEventsUsageDescription</key>
-  <string>O OrganizaMyMac pede ao Finder para esvaziar a Lixeira quando não tem acesso a ela.</string>
+  <string>O OrganizeMyMac pede ao Finder para esvaziar a Lixeira quando não tem acesso a ela.</string>
 </dict>
 </plist>

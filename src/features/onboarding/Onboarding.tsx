@@ -3,7 +3,7 @@ import { ShieldCheck, Trash2, Eye, HardDrive } from "lucide-react";
 import { api } from "../../lib/ipc";
 import { Button } from "../../components/ui";
 
-const KEY = "organizamymac.onboarded";
+const KEY = "organizemymac.onboarded";
 
 export function hasOnboarded(): boolean {
   try {
@@ -65,7 +65,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/25 backdrop-blur-sm p-6">
       <div className="w-full max-w-[560px] rounded-2xl border border-line bg-surface p-8 shadow-2xl">
-        <h1 className="text-[22px] font-semibold tracking-tight">Bem-vindo ao OrganizaMyMac</h1>
+        <h1 className="text-[22px] font-semibold tracking-tight">Bem-vindo ao OrganizeMyMac</h1>
         <p className="mt-1.5 text-ink-2">Entenda o que ocupa espaço no seu Mac e remova o que não precisa, com segurança.</p>
 
         <div className="mt-6 space-y-4">
@@ -84,7 +84,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
           <FullDiskAccessRow />
           <p className="mt-2 text-[12px] text-ink-3">
             Opcional. Sem ele o app funciona, mas não enxerga pastas protegidas como Mail, Mensagens e Safari. Para conceder, ative o
-            OrganizaMyMac em Ajustes do Sistema → Privacidade e Segurança → Acesso Total ao Disco e reabra o app.
+            OrganizeMyMac em Ajustes do Sistema → Privacidade e Segurança → Acesso Total ao Disco e reabra o app.
           </p>
         </div>
 

@@ -5,11 +5,11 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
-use organizamymac_lib::filesystem::scanner::{prompting_locations, scan, ScanOptions, VisitEntry};
-use organizamymac_lib::filesystem::{probe_full_disk_access, AccessStatus};
-use organizamymac_lib::storage::largest::LargestFiles;
-use organizamymac_lib::storage::tree::StorageTree;
-use organizamymac_lib::storage::Fanout;
+use organizemymac_lib::filesystem::scanner::{prompting_locations, scan, ScanOptions, VisitEntry};
+use organizemymac_lib::filesystem::{probe_full_disk_access, AccessStatus};
+use organizemymac_lib::storage::largest::LargestFiles;
+use organizemymac_lib::storage::tree::StorageTree;
+use organizemymac_lib::storage::Fanout;
 
 fn peak_rss_mb() -> f64 {
     let mut usage: libc::rusage = unsafe { std::mem::zeroed() };

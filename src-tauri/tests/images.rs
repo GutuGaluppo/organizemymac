@@ -4,8 +4,8 @@ use std::process::Command;
 use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 
-use organizamymac_lib::filesystem::scanner::{scan, ScanOptions};
-use organizamymac_lib::images::{find_similar, ImageCandidates, Sensitivity};
+use organizemymac_lib::filesystem::scanner::{scan, ScanOptions};
+use organizemymac_lib::images::{find_similar, ImageCandidates, Sensitivity};
 
 fn sips(args: &[&str]) {
     assert!(Command::new("/usr/bin/sips").args(args).output().unwrap().status.success(), "sips {args:?}");

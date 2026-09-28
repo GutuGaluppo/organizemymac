@@ -144,7 +144,7 @@ registerMock("suggested_locations", () =>
     path: { home: HOME, downloads: `${HOME}/Downloads`, documents: `${HOME}/Documents`, desktop: `${HOME}/Desktop`, applications: "/Applications", disk: "/" }[id],
   })),
 );
-registerMock("app_info", () => ({ version: "0.1.0", dataDir: `${HOME}/Library/Application Support/dev.galuppo.OrganizaMyMac`, logDir: `${HOME}/Library/Logs/dev.galuppo.OrganizaMyMac` }));
+registerMock("app_info", () => ({ version: "0.1.0", dataDir: `${HOME}/Library/Application Support/dev.galuppo.OrganizeMyMac`, logDir: `${HOME}/Library/Logs/dev.galuppo.OrganizeMyMac` }));
 registerMock("recent_scans", () => []);
 registerMock("operation_log", () => [
   { id: 2, ts: now - 3_600_000, action: "trash", path: `${HOME}/Downloads/Figma-125.dmg`, size: 530e6, ok: true },
