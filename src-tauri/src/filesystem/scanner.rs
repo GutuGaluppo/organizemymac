@@ -169,6 +169,40 @@ fn read_dir_parallel<'s>(scope: &rayon::Scope<'s>, ctx: &'s WalkContext, tx: Syn
     }
 }
 
+/// Serial walk for scans started from inside the worker pool (e.g. sizing many apps in parallel):
+/// waiting on the pool from one of its own threads could leave no thread free to do the work.
+fn read_dir_serial(ctx: &WalkContext, tx: SyncSender<Batch>, root: PathBuf) {
+    let mut stack = vec![(root, 1usize)];
+    while let Some((dir, depth)) = stack.pop() {
+        if ctx.cancel.load(Ordering::Relaxed) {
+            return;
+        }
+        let batch = match std::fs::read_dir(&dir) {
+            Err(error) => Batch { dir, depth, entries: Vec::new(), error: Some(error) },
+            Ok(read) => {
+                let mut entries = Vec::new();
+                for item in read.flatten() {
+                    let name = item.file_name();
+                    let path = dir.join(&name);
+                    if ctx.skip.contains(&path) {
+                        continue;
+                    }
+                    let meta = FileMeta::read(&path).ok();
+                    if meta.as_ref().is_some_and(|m| m.kind == EntryKind::Dir) && ctx.max_depth.is_none_or(|m| depth < m) {
+                        stack.push((path, depth + 1));
+                    }
+                    entries.push((name, meta));
+                }
+                Batch { dir, depth, entries, error: None }
+            }
+        };
+        // Parents are sent before their subfolders are popped, so the order guarantee holds.
+        if tx.send(batch).is_err() {
+            return;
+        }
+    }
+}
+
 pub fn scan(
     options: &ScanOptions,
     cancel: &Arc<AtomicBool>,
@@ -235,8 +269,14 @@ pub fn scan(
         let ctx = ctx.clone();
         let root = root.clone();
         let descend = options.max_depth.is_none_or(|m| m > 0);
+        let nested = rayon::current_thread_index().is_some();
         std::thread::spawn(move || {
-            if descend {
+            if !descend {
+                return;
+            }
+            if nested {
+                read_dir_serial(&ctx, tx, root);
+            } else {
                 worker_pool().install(|| rayon::scope(|s| read_dir_parallel(s, &ctx, tx, root, 1)));
             }
         })

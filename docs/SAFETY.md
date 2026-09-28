@@ -35,6 +35,28 @@ target.
 - Duplicate groups always keep at least one copy. Shared app containers are marked *danger* and are
   never selected by default.
 - Symlinks are never followed during scans.
+- Removals run deepest path first, so a file inside a folder that is also being removed goes first.
+
+## Applications
+
+App files are classified before an uninstall (`applications/leftovers.rs`):
+
+| Match | Confidence | Selected by default |
+| --- | --- | --- |
+| Name equals the bundle id (`com.vendor.App`, `.plist`, `.savedState`…) | safe | yes |
+| Known app-owned path (`rules/apps/known-paths.json`) | safe | yes |
+| Vendor folder (`Application Support/Vendor`) | review | no |
+| Same name as the app, or a name containing it | review | no |
+| Shared group container | danger | no |
+
+A folder named after another bundle id is never matched by name, and one owned by another
+installed app with a longer id is skipped. `uninstall_app` rebuilds the plan and rejects any path
+that is not part of it, refuses apps that are running and Apple apps that ship with macOS, and only
+touches ~/Library (never /Library).
+
+Leftovers of removed apps must be named after a bundle id that no app on any Spotlight-indexed
+volume has; Apple ids are ignored; if the vendor still has installed apps, the item is only
+offered for review. `remove_orphans` re-checks each path before moving it.
 
 ## Tests
 

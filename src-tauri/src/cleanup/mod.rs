@@ -42,9 +42,11 @@ fn trash_context() -> trash::TrashContext {
 pub fn move_to_trash(policy: &SafetyPolicy, db: &Db, request: &RemovalRequest, action: &str) -> Vec<OperationOutcome> {
     let ctx = RemovalContext { scan_root: request.scan_root.as_ref().map(PathBuf::from), allow_system_library: false };
     let trash = trash_context();
-    request
-        .items
-        .iter()
+    // Deepest paths first: a file inside a folder that is also being removed goes before it.
+    let mut items: Vec<&RemovalItem> = request.items.iter().collect();
+    items.sort_by_key(|i| std::cmp::Reverse(i.path.matches('/').count()));
+    items
+        .into_iter()
         .map(|item| {
             let path = Path::new(&item.path);
             let result = policy

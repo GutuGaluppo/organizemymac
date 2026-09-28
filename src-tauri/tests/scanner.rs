@@ -105,3 +105,23 @@ fn removing_from_tree_updates_totals() {
     assert_eq!(root.size, stats.bytes_scanned - 2_000_000);
     assert!(tree.find(&f.root.join("big/video.mov")).is_none());
 }
+
+#[test]
+fn scans_started_inside_the_pool_do_not_deadlock() {
+    use rayon::prelude::*;
+    let f = common::build();
+    let roots: Vec<_> = (0..24).map(|_| f.root.clone()).collect();
+    // More concurrent scans than pool threads, each started from a pool thread.
+    let totals: Vec<u64> = organizamymac_lib::filesystem::worker_pool().install(|| {
+        roots
+            .par_iter()
+            .map(|r| {
+                let cancel = Arc::new(AtomicBool::new(false));
+                scan(&ScanOptions { root: r.clone(), ..Default::default() }, &cancel, &mut |_: &organizamymac_lib::filesystem::scanner::VisitEntry| {}, |_| {})
+                    .unwrap()
+                    .bytes_scanned
+            })
+            .collect()
+    });
+    assert!(totals.windows(2).all(|w| w[0] == w[1]));
+}

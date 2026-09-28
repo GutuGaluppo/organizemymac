@@ -15,8 +15,9 @@ aplicativos com os restos que deixam.
 | M1 | Armazenamento: visão geral dos discos, arquivos grandes e antigos, Downloads, Lixeira, Mostrar no Finder, Visualização Rápida, mover para a Lixeira com revisão | ✅ |
 | M2 | Duplicados: grupos por tamanho, hash de trechos, BLAKE3 completo, seleção automática que sempre mantém uma cópia, hard links reconhecidos | ✅ |
 | M3 | Mapa de espaço: treemap proporcional (squarified), lista hierárquica, navegação por pastas, trilha de navegação e seleção | ✅ |
+| M4 | Aplicativos: lista com tamanho, versão e último uso; desinstalação com prévia completa dos arquivos em ~/Library por nível de confiança; restos de apps desinstalados | ✅ |
 
-O plano completo está em [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md).
+M0–M4 formam o MVP 1.0 recomendado no plano. O plano completo está em [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md).
 
 ## Funcionalidades
 
@@ -27,6 +28,9 @@ O plano completo está em [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md).
 - **Downloads:** instaladores antigos (pré-selecionados), arquivos grandes, compactados (os já extraídos aparecem como seguros), instaladores recentes, capturas de tela e arquivos antigos.
 - **Duplicados:** agrupa por tamanho, compara trechos do início, meio e fim e só então calcula o BLAKE3 completo (em ~/Projects: 8.307 candidatos, 1.616 lidos por inteiro, 1,8 GB/s). A seleção automática mantém a cópia fora de Downloads e da Lixeira, sem "cópia" no nome e mais antiga; o app recusa remover todas as cópias de um grupo e pula as que mudaram desde a análise.
 - **Lixeira:** quanto ocupa e o que tem; esvaziar pede confirmação. Sem Acesso Total ao Disco, dá para pedir ao Finder.
+- **Aplicativos:** apps de /Applications e ~/Applications com tamanho, versão e último uso (Spotlight); filtros "sem uso há 6 meses" e App Store. Apps do macOS são protegidos; apps abertos precisam ser encerrados antes.
+- **Desinstalar:** o app e os arquivos dele em ~/Library, com o motivo de cada item e o total por local. Identificador exato do app e pastas conhecidas (rules/apps) são *seguros* e já vêm marcados; pasta do fabricante ou com nome parecido pede *revisão*; contêiner compartilhado é *risco*. O servidor refaz o plano e só aceita caminhos que fazem parte dele.
+- **Restos de apps:** arquivos em ~/Library com o identificador de um app que não está em nenhum disco indexado pelo Spotlight. Identificadores da Apple são ignorados; se o fabricante ainda tem apps instalados, o item fica para revisão.
 - Em qualquer lista: Visualização Rápida, Mostrar no Finder e Ignorar. Antes de mover, uma revisão mostra cada caminho, o tamanho e o total.
 
 ## Stack

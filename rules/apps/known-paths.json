@@ -1,0 +1,18 @@
+{
+  "_comment": "Paths (relative to ~/Library) known to belong to one app, beyond the ones named after its bundle id. Matches here are classified as safe. Never list folders shared by several apps.",
+  "com.microsoft.VSCode": ["Application Support/Code"],
+  "com.google.Chrome": ["Application Support/Google/Chrome", "Caches/Google/Chrome"],
+  "com.spotify.client": ["Application Support/Spotify"],
+  "com.tinyspeck.slackmacgap": ["Application Support/Slack"],
+  "com.hnc.Discord": ["Application Support/discord"],
+  "notion.id": ["Application Support/Notion"],
+  "com.figma.Desktop": ["Application Support/Figma"],
+  "us.zoom.xos": ["Application Support/zoom.us"],
+  "com.brave.Browser": ["Application Support/BraveSoftware/Brave-Browser", "Caches/BraveSoftware/Brave-Browser"],
+  "org.mozilla.firefox": ["Application Support/Firefox", "Caches/Firefox"],
+  "com.postmanlabs.mac": ["Application Support/Postman"],
+  "com.todesktop.230313mzl4w4u92": ["Application Support/Cursor"],
+  "md.obsidian": ["Application Support/obsidian"],
+  "com.openai.chat": ["Application Support/ChatGPT"],
+  "com.anthropic.claudefordesktop": ["Application Support/Claude"]
+}

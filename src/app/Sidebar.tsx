@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Copy, Download, FileSearch, FolderSearch, LayoutGrid, Map as MapIcon, Settings, Trash2 } from "lucide-react";
+import { AppWindow, PackageX, Copy, Download, FileSearch, FolderSearch, LayoutGrid, Map as MapIcon, Settings, Trash2 } from "lucide-react";
 import { useNav, type Section } from "../stores/nav";
 import { useJobs } from "../stores/jobs";
 
@@ -17,6 +17,13 @@ const groups: Group[] = [
       { id: "downloads", label: "Downloads", icon: <Download />, job: "downloads" },
       { id: "duplicates", label: "Duplicados", icon: <Copy />, job: "duplicates" },
       { id: "trash", label: "Lixeira", icon: <Trash2 /> },
+    ],
+  },
+  {
+    label: "Aplicativos",
+    items: [
+      { id: "apps", label: "Aplicativos", icon: <AppWindow />, job: "apps" },
+      { id: "leftovers", label: "Restos de apps", icon: <PackageX />, job: "leftovers" },
     ],
   },
 ];

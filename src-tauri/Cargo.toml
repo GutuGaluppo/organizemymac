@@ -35,6 +35,8 @@ libc = "0.2.189"
 tauri-plugin-dialog = "2.8.0"
 rusqlite = { version = "0.40.2", features = ["bundled"] }
 chrono = { version = "0.4.45", features = ["serde"] }
+sysinfo = "0.38.4"
+base64 = "0.23.1"
 
 
 # Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration
@@ -46,4 +48,5 @@ panic = "abort"
 strip = true
 
 [dev-dependencies]
+rayon = "1.12.0"
 tempfile = "3.27.0"

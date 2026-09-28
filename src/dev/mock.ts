@@ -2,7 +2,7 @@
 // answered with fictitious data so screens can be designed and checked without the Rust core.
 // Never bundled into the app (imported only when `import.meta.env.DEV` and outside Tauri).
 import { mockIPC } from "@tauri-apps/api/mocks";
-import type { DuplicateGroup, DuplicatesResult, DownloadItem, DownloadsResult, FileCategory, FileEntry, FindResult, ScanResult, StorageNode } from "../types";
+import type { AppInfo, AppsResult, Leftover, OrphansResult, UninstallPlan, DuplicateGroup, DuplicatesResult, DownloadItem, DownloadsResult, FileCategory, FileEntry, FindResult, ScanResult, StorageNode } from "../types";
 
 const HOME = "/Users/demo";
 const now = Date.now();
@@ -309,6 +309,80 @@ registerMock("storage_node", ({ path, depth }) => {
   remember(n);
   return n;
 });
+
+const app = (name: string, id: string, size: number, lastUsedDays: number | null, extra: Partial<AppInfo> = {}): AppInfo => ({
+  path: `/Applications/${name}.app`,
+  name,
+  bundleId: id,
+  version: "1." + (name.length % 9) + ".2",
+  build: "100",
+  minimumSystem: "13.0",
+  size,
+  modifiedAt: now - 40 * DAY,
+  lastUsedAt: lastUsedDays == null ? null : now - lastUsedDays * DAY,
+  fromAppStore: false,
+  systemApp: false,
+  running: false,
+  iconFile: null,
+  ...extra,
+});
+const demoApps = [
+  app("Xcode", "com.apple.dt.Xcode", 9.45e9, 1, { fromAppStore: true, running: true }),
+  app("Android Studio", "com.google.android.studio", 2.91e9, 240),
+  app("Docker", "com.docker.docker", 2.56e9, 12),
+  app("Figma", "com.figma.Desktop", 612e6, 3),
+  app("Google Chrome", "com.google.Chrome", 1.5e9, 0, { running: true }),
+  app("Visual Studio Code", "com.microsoft.VSCode", 1.46e9, 0),
+  app("Zoom", "us.zoom.xos", 382e6, 410),
+  app("GarageBand", "com.apple.garageband10", 1.1e9, 900, { fromAppStore: true }),
+  app("Spotify", "com.spotify.client", 410e6, 30),
+  app("Safari", "com.apple.Safari", 18e6, 0, { systemApp: true }),
+];
+registerMock("start_app_list", ({ onEvent }) => streamJob<AppsResult>(onEvent, "/Applications", () => ({ apps: demoApps, totalSize: demoApps.reduce((s, a) => s + a.size, 0) }), 900));
+registerMock("app_icon", () => null);
+const lf = (path: string, kind: Leftover["kind"], size: number, rule: Leftover["rule"], confidence: Leftover["confidence"]): Leftover => ({
+  path: `${HOME}/Library/${path}`,
+  kind,
+  size,
+  rule,
+  confidence,
+  selected: confidence === "safe",
+});
+registerMock("uninstall_plan", ({ path }): UninstallPlan => {
+  const a = demoApps.find((x) => x.path === path)!;
+  return {
+    appPath: a.path,
+    name: a.name,
+    bundleId: a.bundleId,
+    appSize: a.size,
+    running: a.running,
+    protected: a.systemApp,
+    fullDiskAccess: false,
+    leftovers: [
+      lf(`Application Support/${a.name}`, "applicationSupport", 250e6, "knownPath", "safe"),
+      lf(`Caches/${a.bundleId}`, "caches", 94e6, "bundleId", "safe"),
+      lf(`Preferences/${a.bundleId}.plist`, "preferences", 80e3, "bundleId", "safe"),
+      lf(`Logs/${a.name}`, "logs", 18e6, "appName", "review"),
+      lf(`Saved Application State/${a.bundleId}.savedState`, "savedState", 1.2e6, "bundleId", "safe"),
+      lf(`Group Containers/ABCDE12345.${a.bundleId?.split(".").slice(0, 2).join(".")}.shared`, "groupContainer", 40e6, "sharedGroup", "danger"),
+    ],
+  };
+});
+registerMock("uninstall_app", ({ path, leftovers }) => [
+  { path, size: 612e6, ok: true, error: null },
+  ...(leftovers as string[]).map((p) => ({ path: p, size: 10e6, ok: true, error: null })),
+]);
+registerMock("start_orphan_scan", ({ onEvent }) =>
+  streamJob<OrphansResult>(onEvent, `${HOME}/Library`, () => {
+    const groups = [
+      { bundleId: "com.tinyspeck.slackmacgap", vendorInstalled: false, items: [lf("Application Support/com.tinyspeck.slackmacgap", "applicationSupport", 275e6, "orphan", "review"), lf("Caches/com.tinyspeck.slackmacgap", "caches", 88e6, "orphan", "safe"), lf("Preferences/com.tinyspeck.slackmacgap.plist", "preferences", 12e3, "orphan", "safe")], size: 363e6 },
+      { bundleId: "com.adobe.dunamis", vendorInstalled: true, items: [lf("Caches/com.adobe.dunamis", "caches", 104e6, "orphan", "review")], size: 104e6 },
+      { bundleId: "com.duckduckgo.macos.browser", vendorInstalled: false, items: [lf("HTTPStorages/com.duckduckgo.macos.browser", "httpStorage", 20e6, "orphan", "safe"), lf("Preferences/com.duckduckgo.macos.browser.plist", "preferences", 40e3, "orphan", "safe")], size: 20e6 },
+    ];
+    return { groups, totalSize: groups.reduce((s, g) => s + g.size, 0), fullDiskAccess: false };
+  }, 900),
+);
+registerMock("remove_orphans", ({ items }) => (items as { path: string; size: number }[]).map((i) => ({ ...i, ok: true, error: null })));
 
 export function install() {
   mockIPC((cmd, args) => {

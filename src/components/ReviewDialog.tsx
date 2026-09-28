@@ -33,9 +33,12 @@ export function ReviewDialog({
   scanRoot,
   home,
   title = "Mover para a Lixeira",
+  execute,
   onClose,
   onDone,
 }: {
+  /** Custom executor (e.g. leftovers, which the backend re-validates differently). */
+  execute?: (items: { path: string; size: number }[]) => Promise<OperationOutcome[]>;
   items: ReviewItem[];
   scanRoot?: string;
   home?: string;
@@ -53,7 +56,8 @@ export function ReviewDialog({
     setBusy(true);
     setError(null);
     try {
-      const out = await api.moveToTrash({ items: items.map((i) => ({ path: i.path, size: i.size })), scanRoot });
+      const plain = items.map((i) => ({ path: i.path, size: i.size }));
+      const out = execute ? await execute(plain) : await api.moveToTrash({ items: plain, scanRoot });
       setOutcomes(out);
       qc.invalidateQueries({ queryKey: ["operations"] });
       qc.invalidateQueries({ queryKey: ["metrics"] });

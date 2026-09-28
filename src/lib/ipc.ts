@@ -3,9 +3,10 @@
 import { Channel, invoke } from "@tauri-apps/api/core";
 import type {
   AppError,
-  AppInfo,
+  BuildInfo,
   OperationOutcome,
   TrashSummary,
+  UninstallPlan,
   Volume,
   IgnoreEntry,
   JobEvent,
@@ -38,7 +39,7 @@ export const api = {
   openSystemSettings: (pane: "fullDiskAccess" | "loginItems" | "storage") =>
     invoke<void>("open_system_settings", { pane }),
   suggestedLocations: () => invoke<Location[]>("suggested_locations"),
-  appInfo: () => invoke<AppInfo>("app_info"),
+  appInfo: () => invoke<BuildInfo>("app_info"),
   recentScans: (module?: string, limit?: number) => invoke<ScanRecord[]>("recent_scans", { module, limit }),
   operationLog: (limit?: number) => invoke<OperationRecord[]>("operation_log", { limit }),
   localMetrics: () => invoke<Record<string, number>>("local_metrics"),
@@ -54,6 +55,10 @@ export const api = {
   moveToTrash: (request: { items: { path: string; size: number }[]; scanRoot?: string }) =>
     invoke<OperationOutcome[]>("move_to_trash", { request }),
   pathExists: (path: string) => invoke<boolean>("path_exists", { path }),
+  appIcon: (path: string) => invoke<string | null>("app_icon", { path }),
+  uninstallPlan: (path: string) => invoke<UninstallPlan>("uninstall_plan", { path }),
+  uninstallApp: (path: string, leftovers: string[]) => invoke<OperationOutcome[]>("uninstall_app", { path, leftovers }),
+  removeOrphans: (items: { path: string; size: number }[]) => invoke<OperationOutcome[]>("remove_orphans", { items }),
   moveDuplicatesToTrash: (
     groups: { all: string[]; remove: { path: string; size: number; modifiedAt: number | null }[] }[],
     scanRoot?: string,

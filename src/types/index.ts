@@ -135,7 +135,7 @@ export type OperationRecord = {
 
 export type IgnoreEntry = { path: string; addedAt: number; reason?: string | null };
 
-export type AppInfo = { version: string; dataDir: string; logDir: string };
+export type BuildInfo = { version: string; dataDir: string; logDir: string };
 
 export type Volume = {
   name: string;
@@ -210,3 +210,54 @@ export type DuplicatesResult = ScanResult & {
   wastedBytes: number;
   hashStats: HashStats;
 };
+
+export type AppInfo = {
+  path: string;
+  name: string;
+  bundleId?: string | null;
+  version?: string | null;
+  build?: string | null;
+  minimumSystem?: string | null;
+  size: number;
+  modifiedAt?: number | null;
+  lastUsedAt?: number | null;
+  fromAppStore: boolean;
+  systemApp: boolean;
+  running: boolean;
+  iconFile?: string | null;
+};
+
+export type AppsResult = { apps: AppInfo[]; totalSize: number };
+
+export type LeftoverKind =
+  | "applicationSupport"
+  | "caches"
+  | "preferences"
+  | "logs"
+  | "savedState"
+  | "webKit"
+  | "httpStorage"
+  | "cookies"
+  | "container"
+  | "groupContainer"
+  | "launchAgent"
+  | "applicationScripts";
+
+export type MatchRule = "bundleId" | "knownPath" | "vendor" | "appName" | "fuzzy" | "sharedGroup" | "orphan";
+
+export type Leftover = { path: string; kind: LeftoverKind; size: number; rule: MatchRule; confidence: Confidence; selected: boolean };
+
+export type UninstallPlan = {
+  appPath: string;
+  name: string;
+  bundleId?: string | null;
+  appSize: number;
+  leftovers: Leftover[];
+  running: boolean;
+  protected: boolean;
+  fullDiskAccess: boolean;
+};
+
+export type OrphanGroup = { bundleId: string; vendorInstalled: boolean; items: Leftover[]; size: number };
+
+export type OrphansResult = { groups: OrphanGroup[]; totalSize: number; fullDiskAccess: boolean };

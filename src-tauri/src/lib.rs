@@ -1,3 +1,4 @@
+pub mod applications;
 pub mod cleanup;
 pub mod commands;
 pub mod db;
@@ -85,6 +86,12 @@ pub fn run() {
             commands::files::path_exists,
             commands::duplicates::start_duplicate_scan,
             commands::duplicates::move_duplicates_to_trash,
+            commands::apps::start_app_list,
+            commands::apps::app_icon,
+            commands::apps::uninstall_plan,
+            commands::apps::uninstall_app,
+            commands::apps::start_orphan_scan,
+            commands::apps::remove_orphans,
             commands::system::permission_status,
             commands::system::open_system_settings,
             commands::system::suggested_locations,
