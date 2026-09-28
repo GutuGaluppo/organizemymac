@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Activity, Images, Sparkles, AppWindow, PackageX, Copy, Download, FileSearch, FolderSearch, LayoutGrid, Map as MapIcon, Settings, Trash2 } from "lucide-react";
+import { Activity, Brush, Images, Sparkles, AppWindow, PackageX, Copy, Download, FileSearch, FolderSearch, LayoutGrid, Map as MapIcon, Settings, Trash2 } from "lucide-react";
 import { useNav, type Section } from "../stores/nav";
 import { useJobs } from "../stores/jobs";
 
@@ -22,6 +22,7 @@ const groups: Group[] = [
       { id: "downloads", label: "Downloads", icon: <Download />, job: "downloads" },
       { id: "duplicates", label: "Duplicados", icon: <Copy />, job: "duplicates" },
       { id: "similarImages", label: "Imagens parecidas", icon: <Images />, job: "similarImages" },
+      { id: "cleanup", label: "Limpeza avançada", icon: <Brush /> },
       { id: "trash", label: "Lixeira", icon: <Trash2 /> },
     ],
   },

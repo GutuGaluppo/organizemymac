@@ -2,6 +2,7 @@
 //! arguments; nothing here runs a shell command built from UI input.
 
 pub mod apps;
+pub mod cleanup_rules;
 pub mod duplicates;
 pub mod files;
 pub mod health;

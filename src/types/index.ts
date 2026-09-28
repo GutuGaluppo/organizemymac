@@ -324,3 +324,27 @@ export type CarePlan = {
   duplicates: { all: string[]; remove: { path: string; size: number; modifiedAt: number | null }[] }[];
   leftovers: { path: string; size: number }[];
 };
+
+export type Risk = "low" | "medium" | "high";
+
+export type CleanupRule = {
+  id: string;
+  group: "user" | "developer" | "browser" | "mail" | "custom";
+  title: string;
+  description: string;
+  paths: string[];
+  risk: Risk;
+  requiresClosed: string[];
+  app?: string | null;
+  perItemRunningCheck: boolean;
+  needsFullDiskAccess: boolean;
+  selected: boolean;
+};
+
+export type RuleItem = { path: string; size: number; selected: boolean; blocked?: string | null; system: boolean };
+
+export type RuleResult = CleanupRule & { items: RuleItem[]; size: number; blockedBy: string[]; unavailable: boolean };
+
+export type CustomRuleDef = { id: string; title: string; folder: string; risk: Risk };
+
+export type RulesReport = { results: RuleResult[]; custom: CustomRuleDef[]; fullDiskAccess: boolean };

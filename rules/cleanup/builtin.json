@@ -1,0 +1,164 @@
+{
+  "_comment": "Built-in cleanup rules. Paths are relative to the home folder; '*' matches one path component. Every match is moved to the Trash, so each rule can be rolled back from there. Never add rules outside the home folder or for data the user cannot get back (documents, mail messages, photos).",
+  "rules": [
+    {
+      "id": "user-caches",
+      "group": "user",
+      "title": "Caches de apps",
+      "description": "Arquivos temporários que os apps recriam quando precisam. Os caches de apps abertos ficam de fora.",
+      "paths": ["Library/Caches/*"],
+      "risk": "low",
+      "perItemRunningCheck": true,
+      "selected": true
+    },
+    {
+      "id": "user-logs",
+      "group": "user",
+      "title": "Registros (logs) de apps",
+      "description": "Arquivos de registro gravados pelos apps. Só são úteis para diagnosticar problemas antigos.",
+      "paths": ["Library/Logs/*"],
+      "risk": "low",
+      "selected": true
+    },
+    {
+      "id": "xcode-derived-data",
+      "group": "developer",
+      "title": "Xcode: DerivedData",
+      "description": "Builds intermediários e índices. O Xcode reconstrói no próximo build.",
+      "paths": ["Library/Developer/Xcode/DerivedData/*"],
+      "risk": "low",
+      "requiresClosed": ["com.apple.dt.Xcode"],
+      "app": "Xcode",
+      "selected": true
+    },
+    {
+      "id": "xcode-device-support",
+      "group": "developer",
+      "title": "Xcode: suporte a dispositivos",
+      "description": "Símbolos baixados de cada versão de iOS/watchOS conectada. São baixados de novo ao conectar o aparelho.",
+      "paths": ["Library/Developer/Xcode/iOS DeviceSupport/*", "Library/Developer/Xcode/watchOS DeviceSupport/*"],
+      "risk": "low",
+      "requiresClosed": ["com.apple.dt.Xcode"],
+      "app": "Xcode",
+      "selected": false
+    },
+    {
+      "id": "xcode-archives",
+      "group": "developer",
+      "title": "Xcode: Archives",
+      "description": "Builds arquivados para distribuição. Necessários para simbolizar crashes de versões publicadas: revise antes.",
+      "paths": ["Library/Developer/Xcode/Archives/*"],
+      "risk": "medium",
+      "requiresClosed": ["com.apple.dt.Xcode"],
+      "app": "Xcode",
+      "selected": false
+    },
+    {
+      "id": "simulator-caches",
+      "group": "developer",
+      "title": "Simulador: caches",
+      "description": "Caches do simulador de iOS, recriados automaticamente.",
+      "paths": ["Library/Developer/CoreSimulator/Caches/*"],
+      "risk": "low",
+      "requiresClosed": ["com.apple.iphonesimulator", "com.apple.dt.Xcode"],
+      "app": "Simulator",
+      "selected": true
+    },
+    {
+      "id": "npm-cache",
+      "group": "developer",
+      "title": "npm: cache",
+      "description": "Pacotes baixados pelo npm. São baixados de novo quando necessário.",
+      "paths": [".npm/_cacache"],
+      "risk": "low",
+      "selected": true
+    },
+    {
+      "id": "cargo-cache",
+      "group": "developer",
+      "title": "Cargo: pacotes baixados",
+      "description": "Arquivos .crate baixados pelo Cargo (Rust). O código extraído continua lá.",
+      "paths": [".cargo/registry/cache/*"],
+      "risk": "low",
+      "selected": true
+    },
+    {
+      "id": "gradle-cache",
+      "group": "developer",
+      "title": "Gradle: caches",
+      "description": "Dependências e builds em cache do Gradle (Android).",
+      "paths": [".gradle/caches/*"],
+      "risk": "low",
+      "requiresClosed": ["com.google.android.studio"],
+      "app": "Android Studio",
+      "selected": false
+    },
+    {
+      "id": "chrome-cache",
+      "group": "browser",
+      "title": "Chrome: cache",
+      "description": "Páginas e imagens guardadas pelo Chrome.",
+      "paths": ["Library/Caches/Google/Chrome/*"],
+      "risk": "low",
+      "requiresClosed": ["com.google.Chrome"],
+      "app": "Google Chrome",
+      "selected": false
+    },
+    {
+      "id": "chrome-history",
+      "group": "browser",
+      "title": "Chrome: histórico",
+      "description": "Histórico de navegação e de downloads de cada perfil. Com a sincronização do Chrome ligada, ele pode voltar.",
+      "paths": ["Library/Application Support/Google/Chrome/*/History", "Library/Application Support/Google/Chrome/*/History-journal"],
+      "risk": "medium",
+      "requiresClosed": ["com.google.Chrome"],
+      "app": "Google Chrome",
+      "selected": false
+    },
+    {
+      "id": "chrome-cookies",
+      "group": "browser",
+      "title": "Chrome: cookies",
+      "description": "Você sai de todos os sites no Chrome.",
+      "paths": ["Library/Application Support/Google/Chrome/*/Cookies", "Library/Application Support/Google/Chrome/*/Cookies-journal"],
+      "risk": "medium",
+      "requiresClosed": ["com.google.Chrome"],
+      "app": "Google Chrome",
+      "selected": false
+    },
+    {
+      "id": "firefox-cache",
+      "group": "browser",
+      "title": "Firefox: cache",
+      "description": "Páginas e imagens guardadas pelo Firefox.",
+      "paths": ["Library/Caches/Firefox/Profiles/*"],
+      "risk": "low",
+      "requiresClosed": ["org.mozilla.firefox"],
+      "app": "Firefox",
+      "selected": false
+    },
+    {
+      "id": "firefox-cookies",
+      "group": "browser",
+      "title": "Firefox: cookies e formulários",
+      "description": "Você sai de todos os sites no Firefox e perde o preenchimento automático de formulários. Favoritos e histórico (places.sqlite) não são tocados.",
+      "paths": ["Library/Application Support/Firefox/Profiles/*/cookies.sqlite", "Library/Application Support/Firefox/Profiles/*/formhistory.sqlite"],
+      "risk": "medium",
+      "requiresClosed": ["org.mozilla.firefox"],
+      "app": "Firefox",
+      "selected": false
+    },
+    {
+      "id": "mail-downloads",
+      "group": "mail",
+      "title": "Mail: anexos abertos",
+      "description": "Cópias de anexos que você abriu no Mail. Os anexos continuam nas mensagens.",
+      "paths": ["Library/Containers/com.apple.mail/Data/Library/Mail Downloads/*"],
+      "risk": "low",
+      "requiresClosed": ["com.apple.mail"],
+      "app": "Mail",
+      "needsFullDiskAccess": true,
+      "selected": true
+    }
+  ]
+}

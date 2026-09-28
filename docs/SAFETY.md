@@ -45,6 +45,16 @@ the same plan moves to the Trash is never deleted permanently. Duplicate groups 
 keep-one and unchanged-since-scan checks as the Duplicates screen, leftovers through the same
 re-validation as App Leftovers, and every file through the safety layer.
 
+## Cleanup rules
+
+`rules/cleanup/builtin.json` defines each rule's locations (relative to the home folder, `*` matching
+one component, symlinked folders never entered), risk, the apps that must be closed and whether it
+is selected by default. A rule's items are blocked while one of those apps runs; for
+`~/Library/Caches/*` each folder is checked against running apps by bundle id, vendor and name.
+`run_cleanup_rules` re-expands the rule and re-checks running apps for every item before moving it.
+Custom rules only accept folders inside the home folder and never the personal top-level folders
+(Desktop, Documents, Downloads, Pictures, Movies, Music, Library…) themselves.
+
 ## Applications
 
 App files are classified before an uninstall (`applications/leftovers.rs`):

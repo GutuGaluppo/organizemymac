@@ -2,7 +2,7 @@
 // answered with fictitious data so screens can be designed and checked without the Rust core.
 // Never bundled into the app (imported only when `import.meta.env.DEV` and outside Tauri).
 import { mockIPC } from "@tauri-apps/api/mocks";
-import type { SmartCareReport, SimilarResult, AppInfo, AppsResult, Leftover, OrphansResult, UninstallPlan, DuplicateGroup, DuplicatesResult, DownloadItem, DownloadsResult, FileCategory, FileEntry, FindResult, ScanResult, StorageNode } from "../types";
+import type { RulesReport, SmartCareReport, SimilarResult, AppInfo, AppsResult, Leftover, OrphansResult, UninstallPlan, DuplicateGroup, DuplicatesResult, DownloadItem, DownloadsResult, FileCategory, FileEntry, FindResult, ScanResult, StorageNode } from "../types";
 
 const HOME = "/Users/demo";
 const now = Date.now();
@@ -486,6 +486,30 @@ registerMock("run_smart_care", ({ plan }) => {
   const p = plan as { files: { path: string; size: number }[]; leftovers: { path: string; size: number }[] };
   return [...p.files, ...p.leftovers].map((i) => ({ ...i, ok: true, error: null }));
 });
+
+const rule = (id: string, group: string, title: string, description: string, risk: string, items: [string, number, string | null, boolean][], extra: Record<string, unknown> = {}) => ({
+  id, group, title, description, paths: [], risk, requiresClosed: [], app: null, perItemRunningCheck: false, needsFullDiskAccess: false, selected: risk === "low",
+  items: items.map(([p, size, blocked, system]) => ({ path: `${HOME}/${p}`, size, blocked, system, selected: risk === "low" && !blocked && !system && group !== "browser" })),
+  size: items.reduce((s, i) => s + i[1], 0), blockedBy: [], unavailable: false, ...extra,
+});
+registerMock("cleanup_rules", (): RulesReport => ({
+  fullDiskAccess: false,
+  custom: [{ id: "c1", title: "Exportações do Figma", folder: "Projects/exports", risk: "medium" }],
+  results: [
+    rule("user-caches", "user", "Caches de apps", "Arquivos temporários que os apps recriam quando precisam. Os caches de apps abertos ficam de fora.", "low", [
+      ["Library/Caches/com.spotify.client", 1.2e9, null, false], ["Library/Caches/Google", 960e6, "Google Chrome", false], ["Library/Caches/Homebrew", 740e6, null, false], ["Library/Caches/com.apple.Music", 120e6, null, true],
+    ]),
+    rule("user-logs", "user", "Registros (logs) de apps", "Arquivos de registro gravados pelos apps.", "low", [["Library/Logs/DiagnosticReports", 180e6, null, false], ["Library/Logs/Zoom", 60e6, null, false]]),
+    rule("xcode-derived-data", "developer", "Xcode: DerivedData", "Builds intermediários e índices. O Xcode reconstrói no próximo build.", "low", [["Library/Developer/Xcode/DerivedData/App-abc", 1.08e9, "Xcode", false]], { blockedBy: ["Xcode"] }),
+    rule("npm-cache", "developer", "npm: cache", "Pacotes baixados pelo npm. São baixados de novo quando necessário.", "low", [[".npm/_cacache", 16.6e9, null, false]]),
+    rule("chrome-history", "browser", "Chrome: histórico", "Histórico de navegação e de downloads de cada perfil.", "medium", [["Library/Application Support/Google/Chrome/Default/History", 80e6, null, false]]),
+    rule("mail-downloads", "mail", "Mail: anexos abertos", "Cópias de anexos que você abriu no Mail.", "low", [], { unavailable: true }),
+    rule("custom:c1", "custom", "Exportações do Figma", "", "medium", [["Projects/exports/v1", 420e6, null, false], ["Projects/exports/v2", 380e6, null, false]]),
+  ],
+} as unknown as RulesReport));
+registerMock("run_cleanup_rules", ({ items }) => (items as { path: string; size: number }[]).map((i) => ({ path: i.path, size: i.size, ok: true, error: null })));
+registerMock("add_custom_rule", () => null);
+registerMock("remove_custom_rule", () => null);
 
 export function install() {
   mockIPC((cmd, args) => {

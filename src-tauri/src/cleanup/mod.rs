@@ -3,6 +3,7 @@
 //! written to the operation log.
 
 pub mod downloads;
+pub mod rules;
 pub mod trash_bin;
 
 use std::path::{Path, PathBuf};
