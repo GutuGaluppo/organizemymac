@@ -25,89 +25,119 @@ trustworthy security engine.
 
 ## Part 1 — Icons
 
+Each module icon is a thick glass slab with its own silhouette (the "frame") and a milky-white symbol on top.
+The frame gives each module its personality; the symbol says what it does. Frames are original shapes chosen
+per module, not copies of any existing icon set.
+
+| Icon | Frame | Tint |
+|---|---|---|
+| Cuidado inteligente | rounded 8-lobe rosette | magenta → violet |
+| Limpeza | rounded droplet / leaf | mint → emerald |
+| Segurança | shield | sky blue → deep blue |
+| Desempenho | dome (flat bottom, arched top) | amber → burnt orange |
+| Aplicativos | horizontal capsule | cyan → teal |
+| Minha bagunça | asymmetric pebble | lavender → purple |
+| Mapa de espaço | rounded diamond (square at 45°) | aqua → green-teal |
+| Scanner | thick lens ring | periwinkle → indigo |
+| App icon | macOS squircle (required by macOS 26) | blue → violet |
+
 ### Base block
 
 ```
-Original macOS app icon in Apple's "Liquid Glass" design language (macOS 26).
-A single bold symbol made of thick, translucent glass floating above a softly tinted
-glass rounded-square (squircle) base. The glass shows real refraction and light bending
-at the edges, a crisp specular highlight along the top-left rim, subtle inner glow,
-soft frosted translucency, and a gentle drop shadow that gives depth. Colors come from
-light passing through tinted glass, not from flat paint. Minimal, geometric, no
-fine detail, readable at 16 px. Centered, front-facing, slight top-down lighting.
-Neutral light-gray background, 1024×1024, no text, no letters, no logos, no brand marks.
+Original 3D icon in Apple's "Liquid Glass" style (macOS 26). A thick slab of frosted,
+translucent tinted glass with a distinctive custom silhouette (the "frame"), seen from
+the front with a slight top-down three-quarter tilt so its thick side wall is visible
+along the bottom edge. The slab has a softly raised rim and rounded bevel all around,
+a glossy highlight along the edges, milky internal diffusion, and a vertical color
+gradient: lighter and more transparent at the top, deeper and more saturated at the
+bottom, with subtle internal caustics. On top of the slab sits one simple symbol made of
+soft, matte, milky-white frosted glass, slightly tinted by the color beneath, with rounded
+edges, a small thickness and a soft contact shadow. Studio lighting from above, soft
+reflections, pure white background, only a faint shadow. Centered, 1024×1024. No text,
+no letters, no logos, no brand marks, not resembling any existing app's icons.
 ```
 
 ### 1. Cuidado inteligente (Smart Care)
 
 ```
-Symbol: three sparkles (one large four-point star, two small ones) in glass.
-Tint: magenta-to-violet gradient glass. The large sparkle has a bright caustic
-highlight at its center, as if catching light. Feeling: effortless, one-click care.
+Frame: a rounded rosette with eight soft, shallow lobes, like a gently scalloped badge.
+Tint: magenta at the top melting into deep violet at the bottom.
+Symbol: three sparkles, one large four-point star and two small ones at its upper right.
 ```
 
 ### 2. Limpeza
 
 ```
-Symbol: an eraser tilted 30°, with a short trail of three tiny glass particles
-fading behind it. Tint: fresh green-to-mint glass. Clean, satisfying, calm.
+Frame: a rounded droplet / leaf shape with its point toward the upper right, very soft
+curves, thick glass.
+Tint: fresh mint at the top to rich emerald at the bottom.
+Symbol: a chunky eraser tilted 30°, with three tiny white glass dots trailing behind it.
 ```
 
 ### 3. Segurança
 
 ```
-Symbol: a shield with a checkmark cut through it, the check showing the base color
-beneath through the glass. Tint: deep blue-to-cyan glass. Sober and trustworthy,
-not aggressive, no lock, no padlock, no warning signs.
+Frame: a classic shield with a softly rounded top edge and a rounded bottom point.
+Tint: light sky blue at the top to deep sapphire blue at the bottom.
+Symbol: a bold, rounded checkmark. Calm and trustworthy, no lock, no warning signs.
 ```
 
 ### 4. Desempenho
 
 ```
-Symbol: a semicircular speedometer gauge with a needle pointing to the upper right,
-three glass tick marks on the arc. Tint: warm orange-to-amber glass, with a slight
-inner glow at the needle pivot. Energetic but controlled.
+Frame: a dome: flat bottom edge with rounded corners and a wide semicircular arched top.
+Tint: warm amber at the top to burnt orange at the bottom.
+Symbol: a speedometer needle pointing to the upper right from a round pivot, with three
+short tick marks following the arch of the frame.
 ```
 
 ### 5. Aplicativos
 
 ```
-Symbol: a 2×2 grid of rounded-square glass tiles, one tile slightly lifted and
-offset toward the viewer. Tint: sky-blue-to-teal glass with each tile a slightly
-different shade. Organized, modular.
+Frame: a wide horizontal capsule (stadium shape), thick and soft.
+Tint: bright cyan at the top to deep teal at the bottom.
+Symbol: a 2×2 grid of small rounded squares; the top-right square is slightly raised.
 ```
 
 ### 6. Minha bagunça
 
 ```
-Symbol: two overlapping document sheets fanned slightly, the front one with a
-folded corner, the back one showing through the translucent front sheet.
-Tint: purple-to-lavender glass. Personal files, gentle, non-judgmental.
+Frame: an asymmetric, organic pebble shape, slightly wider at the bottom left, like a
+smooth river stone.
+Tint: soft lavender at the top to rich purple at the bottom.
+Symbol: two document sheets fanned slightly, the front one with a folded corner.
 ```
 
 ### 7. Mapa de espaço
 
 ```
-Symbol: a treemap: a square split into rectangles of unequal sizes (one large,
-two medium, three small), separated by thin clear glass gaps, each rectangle a
-slightly different tint. Tint family: teal-to-green glass. Analytical, spatial.
+Frame: a rounded diamond (a square rotated 45° with generously rounded corners).
+Tint: aqua at the top to green-teal at the bottom.
+Symbol: an upright small square divided into unequal rectangles (one large, two medium,
+three small) separated by thin gaps, like a treemap.
 ```
 
 ### 8. Scanner
 
 ```
-Symbol: a folder with a magnifying glass in front of it, the lens actually magnifying
-and distorting the folder behind it through refraction. Tint: indigo-to-blue glass.
-Curious, investigative.
+Frame: a thick circular lens ring: a round slab with a raised outer rim and a slightly
+recessed, clearer center, like a magnifying lens seen from the front.
+Tint: periwinkle at the top to deep indigo at the bottom.
+Symbol: a small folder in the recessed center, slightly magnified and distorted by the
+lens around it.
 ```
 
 ### 9. App icon (OrganizeMyMac)
 
+macOS 26 masks app icons to the squircle, so the app icon keeps that frame; personality comes from the symbol.
+
 ```
-Symbol: an open glass box with three small rounded glass blocks neatly stacked inside
-and one block hovering above, about to be placed. Tint: blue-to-violet glass with a
-bright specular highlight on the hovering block. Conveys "organizing your Mac": tidy,
-safe, friendly. Premium Apple-quality craftsmanship.
+Frame: the standard macOS app icon squircle (rounded square), same thick glass slab.
+Tint: electric blue at the top to violet at the bottom, with a faint turquoise glow in
+the center.
+Symbol: a chunky, soft computer monitor on a short stand; on its screen, three small
+rounded blocks arranged as a neat staircase, the top one catching a bright highlight.
+The symbol is the hero: large, filling about 60% of the frame.
 ```
 
 ### Template variant (menu bar and sidebar)
@@ -115,9 +145,8 @@ safe, friendly. Premium Apple-quality craftsmanship.
 Append to any icon prompt above:
 
 ```
-Monochrome template version: same symbol only, no base squircle, single-color
-black glyph on transparent background, uniform 2 px-equivalent stroke weight,
-no gradient, no glass effect.
+Monochrome template version: the symbol only, no glass frame, single-color black glyph
+on a transparent background, uniform stroke weight, no gradient, no glass effect.
 ```
 
 ---
@@ -282,7 +311,7 @@ Grouped glass sections like macOS System Settings:
 
 ## Tips
 
-- Icons: generate the app icon plus Limpeza and Segurança first, pick the best result, and pass it as a style
+- Icons: generate Limpeza and Segurança first, pick the best result, and pass it as a style
   reference image for the rest so the set stays coherent.
 - Pages: with UI generators (Figma Make, v0, Stitch), attach a screenshot of the current page alongside the prompt
   to keep the data structure.

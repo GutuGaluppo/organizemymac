@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { useNav } from "../stores/nav";
+import { moduleOf } from "./modules";
 import { ScannerPage } from "../features/scanner/ScannerPage";
 import { SettingsPage } from "../features/settings/SettingsPage";
 import { OverviewPage } from "../features/dashboard/OverviewPage";
@@ -27,7 +28,7 @@ export function App() {
   return (
     <div className="flex h-full">
       <Sidebar />
-      <main className="min-w-0 flex-1 border-l border-line bg-surface-2">
+      <main data-tint={moduleOf(section)?.id ?? "default"} className="page-canvas min-w-0 flex-1 overflow-hidden rounded-tl-[10px] border-l border-line">
         {section === "overview" && <OverviewPage />}
         {section === "smartCare" && <SmartCarePage />}
         {section === "scanner" && <ScannerPage />}

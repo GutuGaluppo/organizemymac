@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* Design tokens. The sidebar sits on the window's native vibrancy; the content area is opaque. */
-@theme {
+@theme inline {
   --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
   --font-mono: "SF Mono", ui-monospace, Menlo, monospace;
 
@@ -30,8 +30,8 @@
   --ink: #1d1d1f;
   --ink-2: #5b5b61;
   --ink-3: #8e8e93;
-  --accent: #0f9d8a;
-  --accent-soft: rgba(15, 157, 138, 0.12);
+  --accent: #4f6cff;
+  --accent-soft: rgba(79, 108, 255, 0.12);
   --accent-ink: #ffffff;
   --safe: #1f9d55;
   --review: #c77c02;
@@ -48,14 +48,42 @@
     --ink: #f2f2f4;
     --ink-2: #b4b4ba;
     --ink-3: #85858c;
-    --accent: #2cc4ae;
-    --accent-soft: rgba(44, 196, 174, 0.14);
-    --accent-ink: #062a25;
+    --accent: #9db2ff;
+    --accent-soft: rgba(157, 178, 255, 0.16);
+    --accent-ink: #0e1433;
     --safe: #3ecf7a;
     --review: #f0a82e;
     --danger: #ff6b5e;
     --danger-soft: rgba(255, 107, 94, 0.12);
   }
+}
+
+/* Each module tints its pages with the color of its icon (see src/app/modules.ts). */
+[data-tint="smartCare"] { --tint: #c026d3; --tint-dark: #e879f9; }
+[data-tint="cleanup"] { --tint: #0f9f6e; --tint-dark: #34d399; }
+[data-tint="security"] { --tint: #2563eb; --tint-dark: #60a5fa; }
+[data-tint="performance"] { --tint: #ea6a0c; --tint-dark: #fb923c; }
+[data-tint="apps"] { --tint: #0891b2; --tint-dark: #22d3ee; }
+[data-tint="clutter"] { --tint: #7c4dff; --tint-dark: #a78bfa; }
+[data-tint="spaceMap"] { --tint: #0d9488; --tint-dark: #2dd4bf; }
+[data-tint="scanner"] { --tint: #4f46e5; --tint-dark: #818cf8; }
+
+[data-tint] {
+  --accent: var(--tint, #4f6cff);
+  --accent-soft: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+@media (prefers-color-scheme: dark) {
+  [data-tint] {
+    --accent: var(--tint-dark, #9db2ff);
+    --accent-soft: color-mix(in srgb, var(--accent) 16%, transparent);
+  }
+}
+
+/* Content pane: a soft wash of the page's color behind the header. */
+.page-canvas {
+  background:
+    linear-gradient(to bottom, color-mix(in srgb, var(--accent) 9%, transparent), transparent 260px),
+    var(--surface-2);
 }
 
 html,

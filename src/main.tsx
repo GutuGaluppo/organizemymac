@@ -11,6 +11,8 @@ const queryClient = new QueryClient({
 // Outside Tauri (plain browser during development), answer commands with fictitious data.
 if (import.meta.env.DEV && !("__TAURI_INTERNALS__" in window)) {
   (await import("./dev/mock")).install();
+} else {
+  (await import("./lib/windowDrag")).installWindowDrag();
 }
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
