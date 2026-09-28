@@ -20,6 +20,7 @@ aplicativos com os restos que deixam.
 | M6 | Imagens parecidas: helper em Swift (Vision), pré-filtro perceptivo, feature prints, agrupamento e integração com o Fotos | ✅ |
 | M7 | Cuidado inteligente: orquestra as análises, recomendações determinísticas, tela única de revisão e plano de limpeza seguro | ✅ |
 | M8 | Limpeza avançada: banco de regras (caches, registros, ferramentas de desenvolvimento, navegadores, anexos do Mail) e regras personalizadas | ✅ |
+| M9 | Helper privilegiado de manutenção (DNS, Spotlight, snapshots do Time Machine): **só o design e a revisão de segurança** ([docs/M9-PRIVILEGED-HELPER-REVIEW.md](docs/M9-PRIVILEGED-HELPER-REVIEW.md)); o plano exige essa revisão antes de qualquer código | 📝 |
 
 M0–M4 formam o MVP 1.0 recomendado no plano. O plano completo está em [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md).
 
