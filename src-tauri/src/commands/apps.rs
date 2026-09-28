@@ -7,7 +7,7 @@ use tauri::ipc::Channel;
 use tauri::{AppHandle, Manager};
 
 use super::{start_job, JobEvent, JobOutcome};
-use crate::applications::leftovers::{find_for_app, find_orphans, installed_bundle_ids, looks_like_bundle_id, AppIdentity, Leftover, OrphanGroup, LOCATIONS};
+use crate::applications::leftovers::{find_for_app, find_orphans, installed_bundle_ids, still_orphan, AppIdentity, Leftover, OrphanGroup};
 use crate::applications::{icon_png, is_running, list_apps, read_bundle, running_executables, AppInfo};
 use crate::cleanup::{self, RemovalItem, RemovalRequest};
 use crate::error::{AppError, AppResult};
@@ -183,18 +183,7 @@ pub async fn remove_orphans(app: AppHandle, items: Vec<RemovalItem>) -> AppResul
         let mut accepted = Vec::new();
         for item in items {
             let p = PathBuf::from(&item.path);
-            let parent_ok = p.parent().is_some_and(|parent| LOCATIONS.iter().any(|(d, _)| parent == library.join(d)));
-            let name = p.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default();
-            let id = if p.parent() == Some(library.join("Group Containers").as_path()) {
-                name.split_once('.').map(|(_, r)| r.to_string()).unwrap_or_default()
-            } else {
-                [".plist", ".savedState", ".binarycookies"].iter().find_map(|s| name.strip_suffix(s)).unwrap_or(&name).to_string()
-            };
-            let still_orphan = looks_like_bundle_id(&id) && !id.starts_with("com.apple.") && !installed.iter().any(|i| {
-                let (i, l) = (i.to_lowercase(), id.to_lowercase());
-                i == l || l.starts_with(&format!("{i}.")) || i.starts_with(&format!("{l}."))
-            });
-            if parent_ok && still_orphan {
+            if still_orphan(&p, &library, &installed) {
                 accepted.push(item);
             } else {
                 outcomes.push(OperationOutcome { path: item.path, size: item.size, ok: false, error: Some("no longer looks like a leftover".into()) });

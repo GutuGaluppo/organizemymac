@@ -13,6 +13,7 @@ import { AppsPage } from "../features/applications/AppsPage";
 import { LeftoversPage } from "../features/applications/LeftoversPage";
 import { PerformancePage } from "../features/performance/PerformancePage";
 import { SimilarImagesPage } from "../features/images/SimilarImagesPage";
+import { SmartCarePage } from "../features/smartcare/SmartCarePage";
 import { Onboarding, hasOnboarded } from "../features/onboarding/Onboarding";
 
 export function App() {
@@ -24,6 +25,7 @@ export function App() {
       <Sidebar />
       <main className="min-w-0 flex-1 border-l border-line bg-surface-2">
         {section === "overview" && <OverviewPage />}
+        {section === "smartCare" && <SmartCarePage />}
         {section === "scanner" && <ScannerPage />}
         {section === "spaceMap" && <SpaceMapPage />}
         {section === "largeFiles" && <LargeFilesPage />}

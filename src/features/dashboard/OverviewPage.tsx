@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Activity, AppWindow, ChevronRight, Copy, Map as MapIcon, Download, FileSearch, FolderSearch, HardDrive, Trash2, Usb } from "lucide-react";
+import { Activity, Sparkles, AppWindow, ChevronRight, Copy, Map as MapIcon, Download, FileSearch, FolderSearch, HardDrive, Trash2, Usb } from "lucide-react";
 import { api } from "../../lib/ipc";
 import { Card, PageHeader } from "../../components/ui";
 import { formatBytes, formatDateTime, shortPath } from "../../lib/format";
@@ -82,6 +82,7 @@ export function OverviewPage() {
         <div>
           <h2 className="mb-2 text-[13px] font-semibold">Por onde começar</h2>
           <div className="grid grid-cols-2 gap-3">
+            <Shortcut to="smartCare" icon={<Sparkles />} title="Cuidado inteligente" text="Uma análise completa com recomendações para revisar." />
             <Shortcut to="scanner" icon={<FolderSearch />} title="O que ocupa espaço" text="Analise uma pasta ou o disco inteiro." />
             <Shortcut to="spaceMap" icon={<MapIcon />} title="Mapa de espaço" text="Veja as pastas em proporção e navegue por elas." />
             <Shortcut to="largeFiles" icon={<FileSearch />} title="Arquivos grandes e antigos" text="Os maiores e os esquecidos." />

@@ -11,17 +11,15 @@ use tauri::AppHandle;
 
 use super::scan::{record, scan_options, validate_root, ScanResult};
 use super::{start_job, JobEvent, JobOutcome};
-use crate::cleanup::downloads::{classify, looks_extracted, rank, DownloadItem};
+use crate::cleanup::downloads::DownloadItem;
 use crate::cleanup::{self, trash_bin, RemovalRequest};
 use crate::db::now_ms;
 use crate::error::{AppError, AppResult};
-use crate::filesystem::metadata::FileMeta;
-use crate::filesystem::scanner::{scan, ScanStats, ScanVisitor};
+use crate::filesystem::scanner::{scan, ScanStats};
 use crate::state::AppState;
 use crate::storage::finder::{FileFilter, FileFinder, FinderResult};
-use crate::storage::tree::StorageTree;
 use crate::storage::volumes::{self, Volume};
-use crate::types::{FileEntry, OperationOutcome};
+use crate::types::OperationOutcome;
 
 fn existing_absolute(path: &str) -> AppResult<PathBuf> {
     let p = PathBuf::from(path);
@@ -91,36 +89,7 @@ pub fn start_downloads_scan(app: AppHandle, on_event: Channel<JobEvent<Downloads
     Ok(start_job(&app, on_event, "downloads", move |state, cancel, emit| {
         let started_at = now_ms();
         let root = state.paths.home.join("Downloads");
-        let mut tree = StorageTree::new(&root, u64::MAX);
-        let mut top: Vec<(PathBuf, FileMeta)> = Vec::new();
-        let stats = {
-            let mut visitor = |e: &crate::filesystem::scanner::VisitEntry| {
-                ScanVisitor::visit(&mut tree, e);
-                if e.depth == 1 && e.path.file_name().is_some_and(|n| n != ".DS_Store" && n != ".localized") {
-                    top.push((e.path.to_path_buf(), e.meta.clone()));
-                }
-            };
-            scan(&scan_options(state, &root), cancel, &mut visitor, &mut *emit)?
-        };
-        tree.finish();
-        let dirs: Vec<String> = top
-            .iter()
-            .filter(|(_, m)| m.is_dir())
-            .filter_map(|(p, _)| p.file_name().map(|n| n.to_string_lossy().into_owned()))
-            .collect();
-        let now = now_ms();
-        let mut items: Vec<DownloadItem> = top
-            .iter()
-            .map(|(path, meta)| {
-                let mut entry = FileEntry::new(path, meta);
-                if meta.is_dir() {
-                    entry.size_logical = tree.find(path).and_then(|id| tree.view(id, 0, 0)).map(|n| n.size).unwrap_or(0);
-                }
-                let extracted = !meta.is_dir() && looks_extracted(path, &dirs);
-                classify(entry, extracted, now)
-            })
-            .collect();
-        rank(&mut items);
+        let (items, stats) = crate::cleanup::downloads::analyze(&scan_options(state, &root), cancel, &mut *emit)?;
         let total_bytes = items.iter().map(|i| i.entry.size_logical).sum();
         let reclaimable = items.iter().filter(|i| i.selected).map(|i| i.entry.size_logical).sum();
         let scan = scan_result(uuid::Uuid::new_v4().to_string(), started_at, &stats, reclaimable);

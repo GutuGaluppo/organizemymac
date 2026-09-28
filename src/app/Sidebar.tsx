@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Activity, Images, AppWindow, PackageX, Copy, Download, FileSearch, FolderSearch, LayoutGrid, Map as MapIcon, Settings, Trash2 } from "lucide-react";
+import { Activity, Images, Sparkles, AppWindow, PackageX, Copy, Download, FileSearch, FolderSearch, LayoutGrid, Map as MapIcon, Settings, Trash2 } from "lucide-react";
 import { useNav, type Section } from "../stores/nav";
 import { useJobs } from "../stores/jobs";
 
@@ -7,7 +7,12 @@ type Item = { id: Section; label: string; icon: ReactNode; job?: string };
 type Group = { label?: string; items: Item[] };
 
 const groups: Group[] = [
-  { items: [{ id: "overview", label: "Visão geral", icon: <LayoutGrid /> }] },
+  {
+    items: [
+      { id: "overview", label: "Visão geral", icon: <LayoutGrid /> },
+      { id: "smartCare", label: "Cuidado inteligente", icon: <Sparkles />, job: "smartCare" },
+    ],
+  },
   {
     label: "Armazenamento",
     items: [

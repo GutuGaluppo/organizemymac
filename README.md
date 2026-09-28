@@ -18,12 +18,14 @@ aplicativos com os restos que deixam.
 | M4 | Aplicativos: lista com tamanho, versão e último uso; desinstalação com prévia completa dos arquivos em ~/Library por nível de confiança; restos de apps desinstalados | ✅ |
 | M5 | Saúde do Mac e barra de menus: CPU, memória, swap, disco, bateria, tempo ligado, apps abertos e os que mais usam memória | ✅ |
 | M6 | Imagens parecidas: helper em Swift (Vision), pré-filtro perceptivo, feature prints, agrupamento e integração com o Fotos | ✅ |
+| M7 | Cuidado inteligente: orquestra as análises, recomendações determinísticas, tela única de revisão e plano de limpeza seguro | ✅ |
 
 M0–M4 formam o MVP 1.0 recomendado no plano. O plano completo está em [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md).
 
 ## Funcionalidades
 
 - **Visão geral:** espaço livre e usado de cada disco, atalhos e últimas análises.
+- **Cuidado inteligente:** uma análise que junta Lixeira, Downloads, duplicados acima de 10 MB, arquivos grandes esquecidos, apps sem uso e restos de apps (≈15 s no Mac de desenvolvimento), com recomendações por regras fixas (sem IA) e uma revisão por seções. Só vem marcado o que é seguro; a Lixeira nunca vem marcada e, se escolhida, é esvaziada antes e apenas com os itens revisados.
 - **Scanner:** o que ocupa espaço em uma pasta ou no disco inteiro, com totais lógico e em disco, pastas e maiores arquivos.
 - **Mapa de espaço:** retângulos com área proporcional ao espaço, dois níveis por vez; clique numa pasta para entrar, trilha de navegação para voltar, lista hierárquica ao lado e seleção de pastas ou arquivos para a Lixeira. Usa a análise do Scanner, sem ler o disco de novo.
 - **Grandes e antigos:** filtros por tamanho (100 MB, 500 MB, 1 GB), tempo sem modificação e tipo; arquivos dentro de apps e bibliotecas não são separados.

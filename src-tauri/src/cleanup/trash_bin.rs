@@ -70,24 +70,25 @@ pub fn summary(trash_dir: &Path) -> AppResult<TrashSummary> {
     Ok(TrashSummary { path, readable: true, files, folders, bytes, items })
 }
 
-/// Permanently deletes every top-level item in the Trash. Each one still passes the safety layer
-/// (it must be inside the Trash folder after resolving symlinks, not the folder itself, etc.).
-pub fn empty(policy: &SafetyPolicy, db: &Db, trash_dir: &Path) -> AppResult<Vec<OperationOutcome>> {
+/// Permanently deletes only the reviewed top-level items of the Trash (Smart Care: items moved to
+/// the Trash after the review are never touched).
+pub fn empty_only(policy: &SafetyPolicy, db: &Db, trash_dir: &Path, reviewed: &[String]) -> AppResult<Vec<OperationOutcome>> {
     let items = summary(trash_dir)?;
     if !items.readable {
         return Err(AppError::Invalid("the Trash cannot be read without Full Disk Access".into()));
     }
+    let wanted: std::collections::HashSet<&str> = reviewed.iter().map(String::as_str).collect();
+    Ok(delete_items(policy, db, trash_dir, items.items.iter().filter(|e| wanted.contains(e.path.as_str()))))
+}
+
+fn delete_items<'a>(policy: &SafetyPolicy, db: &Db, trash_dir: &Path, entries: impl Iterator<Item = &'a FileEntry>) -> Vec<OperationOutcome> {
     let ctx = RemovalContext { scan_root: Some(trash_dir.to_path_buf()), allow_system_library: false };
-    Ok(items
-        .items
-        .iter()
+    entries
         .map(|entry| {
             let path = Path::new(&entry.path);
             let result = policy.check(path, &ctx).map_err(|v| v.to_string()).and_then(|resolved| {
                 let meta = std::fs::symlink_metadata(&resolved).map_err(|e| e.to_string())?;
-                // remove_file on a symlink removes the link itself, never its target.
-                if meta.is_dir() { std::fs::remove_dir_all(&resolved) } else { std::fs::remove_file(&resolved) }
-                    .map_err(|e| e.to_string())
+                if meta.is_dir() { std::fs::remove_dir_all(&resolved) } else { std::fs::remove_file(&resolved) }.map_err(|e| e.to_string())
             });
             let (ok, error) = match result {
                 Ok(()) => (true, None),
@@ -96,7 +97,17 @@ pub fn empty(policy: &SafetyPolicy, db: &Db, trash_dir: &Path) -> AppResult<Vec<
             let _ = db.log_operation("emptyTrash", &entry.path, entry.size_logical, ok, error.as_deref());
             OperationOutcome { path: entry.path.clone(), size: entry.size_logical, ok, error }
         })
-        .collect())
+        .collect()
+}
+
+/// Permanently deletes every top-level item in the Trash. Each one still passes the safety layer
+/// (it must be inside the Trash folder after resolving symlinks, not the folder itself, etc.).
+pub fn empty(policy: &SafetyPolicy, db: &Db, trash_dir: &Path) -> AppResult<Vec<OperationOutcome>> {
+    let items = summary(trash_dir)?;
+    if !items.readable {
+        return Err(AppError::Invalid("the Trash cannot be read without Full Disk Access".into()));
+    }
+    Ok(delete_items(policy, db, trash_dir, items.items.iter()))
 }
 
 #[cfg(test)]
@@ -129,5 +140,21 @@ mod tests {
         // The symlink's target outside the Trash is untouched.
         assert_eq!(fs::read(root.join("keep.txt")).unwrap(), b"outside");
         assert!(trash.exists());
+    }
+
+    #[test]
+    fn empty_only_touches_reviewed_items() {
+        let dir = tempfile::tempdir().unwrap();
+        let trash = fs::canonicalize(dir.path()).unwrap().join(".Trash");
+        fs::create_dir_all(&trash).unwrap();
+        fs::write(trash.join("reviewed.txt"), b"a").unwrap();
+        fs::write(trash.join("added-later.txt"), b"b").unwrap();
+        let policy = SafetyPolicy::custom(vec![], vec![trash.clone()], vec![]);
+        let db = Db::open_in_memory().unwrap();
+        let reviewed = vec![trash.join("reviewed.txt").display().to_string()];
+        let out = empty_only(&policy, &db, &trash, &reviewed).unwrap();
+        assert_eq!(out.len(), 1);
+        assert!(!trash.join("reviewed.txt").exists());
+        assert!(trash.join("added-later.txt").exists());
     }
 }

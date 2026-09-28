@@ -37,6 +37,14 @@ target.
 - Symlinks are never followed during scans.
 - Removals run deepest path first, so a file inside a folder that is also being removed goes first.
 
+## Smart Care
+
+Smart Care only proposes; `run_smart_care` executes what the user approved. Emptying the Trash runs
+first and deletes exactly the Trash items shown in the review (`trash_bin::empty_only`), so anything
+the same plan moves to the Trash is never deleted permanently. Duplicate groups go through the same
+keep-one and unchanged-since-scan checks as the Duplicates screen, leftovers through the same
+re-validation as App Leftovers, and every file through the safety layer.
+
 ## Applications
 
 App files are classified before an uninstall (`applications/leftovers.rs`):

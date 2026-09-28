@@ -9,6 +9,7 @@ pub mod images;
 pub mod jobs;
 pub mod menubar;
 pub mod processes;
+pub mod smart_care;
 pub mod state;
 pub mod storage;
 pub mod types;
@@ -106,6 +107,8 @@ pub fn run() {
             commands::images::start_similar_photos,
             commands::images::photo_thumbnail,
             commands::images::delete_photos,
+            commands::smart_care::start_smart_care,
+            commands::smart_care::run_smart_care,
             commands::health::health,
             commands::health::process_list,
             commands::health::quit_application,

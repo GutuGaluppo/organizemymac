@@ -329,6 +329,22 @@ pub fn find_orphans(library: &Path, installed: &HashSet<String>, full_disk_acces
     out
 }
 
+/// Re-validation before removal: `path` must be an entry of one of the known ~/Library folders,
+/// named after a bundle id that no installed app has (and not Apple's).
+pub fn still_orphan(path: &Path, library: &Path, installed: &HashSet<String>) -> bool {
+    let Some(parent) = path.parent() else { return false };
+    if !LOCATIONS.iter().any(|(d, _)| parent == library.join(d)) {
+        return false;
+    }
+    let name = path.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default();
+    let id = if parent == library.join("Group Containers") {
+        name.split_once('.').map(|(_, r)| r.to_string()).unwrap_or_default()
+    } else {
+        strip_suffix(&name).to_string()
+    };
+    looks_like_bundle_id(&id) && !id.starts_with("com.apple.") && !is_installed(&id, installed)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

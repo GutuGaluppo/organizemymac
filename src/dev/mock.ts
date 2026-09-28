@@ -2,7 +2,7 @@
 // answered with fictitious data so screens can be designed and checked without the Rust core.
 // Never bundled into the app (imported only when `import.meta.env.DEV` and outside Tauri).
 import { mockIPC } from "@tauri-apps/api/mocks";
-import type { SimilarResult, AppInfo, AppsResult, Leftover, OrphansResult, UninstallPlan, DuplicateGroup, DuplicatesResult, DownloadItem, DownloadsResult, FileCategory, FileEntry, FindResult, ScanResult, StorageNode } from "../types";
+import type { SmartCareReport, SimilarResult, AppInfo, AppsResult, Leftover, OrphansResult, UninstallPlan, DuplicateGroup, DuplicatesResult, DownloadItem, DownloadsResult, FileCategory, FileEntry, FindResult, ScanResult, StorageNode } from "../types";
 
 const HOME = "/Users/demo";
 const now = Date.now();
@@ -450,6 +450,42 @@ registerMock("start_similar_images", ({ root, onEvent }) =>
     return { ...baseScan(root as string), groups, images: 1840, truncated: false, vision: { analyzed: 1840, candidates: 212, featurePrints: 212, failed: 3, elapsedMs: 9400 }, reclaimable: groups.reduce((s, g) => s + g.reclaimable, 0) };
   }, 1500),
 );
+
+registerMock("start_smart_care", ({ onEvent }) => {
+  const id = (onEvent as { id: number }).id;
+  let index = 0;
+  const send = (message: unknown) =>
+    (window as unknown as { __TAURI_INTERNALS__: { runCallback: (id: number, d: unknown) => void } }).__TAURI_INTERNALS__.runCallback(id, { index: index++, message });
+  const stages = ["trash", "downloads", "home", "duplicates", "apps", "leftovers"];
+  stages.forEach((s, i) => setTimeout(() => send({ event: "stage", stage: s, done: i, total: 6 }), 250 * i));
+  setTimeout(() => {
+    const dl = (name: string, size: number, age: number, sel: boolean): DownloadItem => ({ ...fakeFile(`${HOME}/Downloads/${name}`, size, age, "diskImage"), group: sel ? "oldInstaller" : "recent", ageDays: age, extracted: false, confidence: sel ? "safe" : "review", selected: sel });
+    const result: SmartCareReport = {
+      diskTotal: 994.66e9,
+      diskFree: 82e9,
+      trash: { path: `${HOME}/.Trash`, readable: true, files: 412, folders: 20, bytes: 2.5e9, items: [fakeFile(`${HOME}/.Trash/old-project.zip`, 2.5e9, 12, "archive")] },
+      downloads: [dl("Figma-126.1.dmg", 540e6, 60, true), dl("Docker.dmg", 610e6, 120, true), dl("Zoom.pkg", 98e6, 210, true), dl("apresentacao.key", 44e6, 12, false)],
+      duplicates: [dupGroup("Viagem Patagônia 4K.mov", 1.4e9, ["Movies", "Desktop/Backup vídeos"], "video"), dupGroup("Backup iPhone 2024.zip", 1.7e9, ["Documents", "Downloads"], "archive")],
+      largeOld: [fakeFile(`${HOME}/Documents/VM/Windows 11.vhdx`, 5.2e9, 700, "diskImage")],
+      unusedApps: demoApps.filter((a) => (a.lastUsedAt ?? 0) < Date.now() - 180 * DAY),
+      leftovers: [{ bundleId: "com.tinyspeck.slackmacgap", vendorInstalled: false, items: [lf("Caches/com.tinyspeck.slackmacgap", "caches", 88e6, "orphan", "safe")], size: 88e6 }],
+      recommendations: [
+        { id: "lowDisk", level: "high", title: "Pouco espaço livre", detail: "Restam 82,0 GB (8% do disco). Abaixo de 10% o macOS pode ficar lento e falhar em atualizações.", bytes: 0 },
+        { id: "duplicates", level: "suggest", title: "Remover cópias duplicadas", detail: "Arquivos idênticos de mais de 10 MB ocupam 3,1 GB a mais.", bytes: 3.1e9 },
+        { id: "emptyTrash", level: "suggest", title: "Esvaziar a Lixeira", detail: "A Lixeira ocupa 2,5 GB.", bytes: 2.5e9 },
+        { id: "installers", level: "suggest", title: "Revisar instaladores em Downloads", detail: "3 instaladores; os antigos somam 1,2 GB.", bytes: 1.2e9 },
+      ],
+      durationMs: 15300,
+    };
+    send({ event: "complete", result });
+    send({ end: true, index });
+  }, 1700);
+  return crypto.randomUUID();
+});
+registerMock("run_smart_care", ({ plan }) => {
+  const p = plan as { files: { path: string; size: number }[]; leftovers: { path: string; size: number }[] };
+  return [...p.files, ...p.leftovers].map((i) => ({ ...i, ok: true, error: null }));
+});
 
 export function install() {
   mockIPC((cmd, args) => {

@@ -2,11 +2,16 @@
 //! (the app they installed is usually already in /Applications), then large files, archives,
 //! screenshots and old files. Only old installers are selected by default.
 
-use std::path::Path;
+use std::path::{Path, PathBuf};
+use std::sync::atomic::AtomicBool;
+use std::sync::Arc;
 
 use serde::Serialize;
 
-use crate::filesystem::metadata::{extension_of, FileCategory};
+use crate::error::AppResult;
+use crate::filesystem::metadata::{extension_of, FileCategory, FileMeta};
+use crate::filesystem::scanner::{scan, ScanEvent, ScanOptions, ScanStats, ScanVisitor, VisitEntry};
+use crate::storage::tree::StorageTree;
 use crate::types::{Confidence, FileEntry};
 
 const DAY_MS: i64 = 86_400_000;
@@ -94,6 +99,41 @@ pub fn looks_extracted(archive: &Path, sibling_dirs: &[String]) -> bool {
 /// Ranked for review: groups in order, largest first inside each group.
 pub fn rank(items: &mut [DownloadItem]) {
     items.sort_by(|a, b| a.group.cmp(&b.group).then(b.entry.size_logical.cmp(&a.entry.size_logical)));
+}
+
+/// Scans the Downloads folder (`options.root`) and classifies its top-level items, ranked.
+pub fn analyze(options: &ScanOptions, cancel: &Arc<AtomicBool>, emit: &mut dyn FnMut(ScanEvent)) -> AppResult<(Vec<DownloadItem>, ScanStats)> {
+    let mut tree = StorageTree::new(&options.root, u64::MAX);
+    let mut top: Vec<(PathBuf, FileMeta)> = Vec::new();
+    let stats = {
+        let mut visitor = |e: &VisitEntry| {
+            ScanVisitor::visit(&mut tree, e);
+            if e.depth == 1 && e.path.file_name().is_some_and(|n| n != ".DS_Store" && n != ".localized") {
+                top.push((e.path.to_path_buf(), e.meta.clone()));
+            }
+        };
+        scan(options, cancel, &mut visitor, emit)?
+    };
+    tree.finish();
+    let dirs: Vec<String> = top
+        .iter()
+        .filter(|(_, m)| m.is_dir())
+        .filter_map(|(p, _)| p.file_name().map(|n| n.to_string_lossy().into_owned()))
+        .collect();
+    let now = crate::db::now_ms();
+    let mut items: Vec<DownloadItem> = top
+        .iter()
+        .map(|(path, meta)| {
+            let mut entry = FileEntry::new(path, meta);
+            if meta.is_dir() {
+                entry.size_logical = tree.find(path).and_then(|id| tree.view(id, 0, 0)).map(|n| n.size).unwrap_or(0);
+            }
+            let extracted = !meta.is_dir() && looks_extracted(path, &dirs);
+            classify(entry, extracted, now)
+        })
+        .collect();
+    rank(&mut items);
+    Ok((items, stats))
 }
 
 #[cfg(test)]

@@ -302,3 +302,25 @@ export type SimilarResult = ScanResult & { groups: SimilarGroup[]; images: numbe
 export type PhotoMember = { id: string; width: number; height: number; distance: number; keep: boolean };
 
 export type SimilarPhotosResult = { groups: PhotoMember[][]; vision: VisionStats };
+
+export type Recommendation = { id: string; level: "high" | "suggest"; title: string; detail: string; bytes: number };
+
+export type SmartCareReport = {
+  diskTotal: number;
+  diskFree: number;
+  trash: TrashSummary;
+  downloads: DownloadItem[];
+  duplicates: DuplicateGroup[];
+  largeOld: FileEntry[];
+  unusedApps: AppInfo[];
+  leftovers: OrphanGroup[];
+  recommendations: Recommendation[];
+  durationMs: number;
+};
+
+export type CarePlan = {
+  emptyTrash: string[];
+  files: { path: string; size: number }[];
+  duplicates: { all: string[]; remove: { path: string; size: number; modifiedAt: number | null }[] }[];
+  leftovers: { path: string; size: number }[];
+};
