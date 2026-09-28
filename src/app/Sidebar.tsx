@@ -3,10 +3,10 @@ import { useNav, type Section } from "../stores/nav";
 import { useJobs } from "../stores/jobs";
 import { appIcon, home, modules, smartCare, tools, type Module } from "./modules";
 
-// Rows are translucent pills over the window's vibrancy: faint at rest, brighter on hover, brightest when active.
+// Rows sit on the window gradient; the active one becomes a glass pill.
 const rowClass = (active: boolean) =>
   `flex w-full items-center gap-2.5 rounded-lg px-2 text-left text-[13px] text-ink transition-colors duration-150 ${
-    active ? "bg-white/45 dark:bg-white/20 font-semibold" : "font-medium bg-white/10 dark:bg-[#0b1740]/20 hover:bg-white/30 dark:hover:bg-white/12"
+    active ? "glass font-semibold" : "font-medium border border-transparent hover:bg-white/10"
   }`;
 
 function useRunning(jobs: (string | undefined)[]) {
@@ -25,7 +25,7 @@ function SubItem({ id, label, job }: { id: Section; label: string; job?: string 
     <button
       onClick={() => go(id)}
       className={`flex h-7 w-full items-center gap-2 rounded-md pr-2 pl-[50px] text-left text-[12.5px] transition-colors duration-150 ${
-        active ? "bg-white/45 dark:bg-white/20 font-semibold text-ink" : "text-ink-2 hover:bg-white/25 dark:hover:bg-white/10 hover:text-ink"
+        active ? "bg-white/15 font-semibold text-ink" : "text-ink-2 hover:bg-white/8 hover:text-ink"
       }`}
     >
       <span className="flex-1 truncate">{label}</span>
@@ -44,7 +44,7 @@ function ModuleItem({ module }: { module: Module }) {
       <button onClick={() => go(module.sections[0].id)} className={`${rowClass(inside)} h-[38px]`}>
         <img src={module.icon} alt="" className="size-[30px] shrink-0 object-contain" draggable={false} />
         <span className="flex-1 truncate">{module.label}</span>
-        {module.badge && <small className="rounded bg-white/40 px-1.5 py-px text-[9px] font-medium text-ink-2 dark:bg-white/18">{module.badge}</small>}
+        {module.badge && <small className="rounded bg-white/18 px-1.5 py-px text-[9px] font-medium text-ink-2">{module.badge}</small>}
         {running && !expanded && <Pulse />}
       </button>
       {expanded && (
@@ -74,7 +74,7 @@ function Group({ label, items }: { label?: string; items: Module[] }) {
 export function Sidebar() {
   const { section, go } = useNav();
   return (
-    <nav className="drag flex h-full w-[212px] shrink-0 flex-col px-3 pt-[52px] pb-3.5 [text-shadow:0_1px_2px_rgb(255_255_255/0.5)] dark:[text-shadow:0_1px_3px_rgb(7_17_46/0.6)]">
+    <nav className="drag flex h-full w-[212px] shrink-0 flex-col px-3 pt-[52px] pb-3.5 [text-shadow:0_1px_3px_rgb(0_0_0/0.3)]">
       <div className="flex items-center gap-2.5 px-2 pb-5 text-[15px] font-semibold text-ink">
         <img src={appIcon} alt="" className="size-[30px] object-contain" draggable={false} />
         OrganizeMyMac

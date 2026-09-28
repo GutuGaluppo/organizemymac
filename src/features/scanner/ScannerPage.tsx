@@ -120,7 +120,7 @@ export function LocationPicker({ onPick, disabled }: { onPick: (path: string) =>
             key={l.id}
             disabled={disabled}
             onClick={() => onPick(l.path)}
-            className="group flex items-center gap-3 rounded-xl border border-line bg-surface p-3.5 text-left transition hover:border-accent/50 hover:bg-accent-soft disabled:opacity-50"
+            className="group flex items-center gap-3 rounded-xl glass p-3.5 text-left transition hover:border-accent/50 hover:bg-accent-soft disabled:opacity-50"
           >
             <span className="grid size-9 place-items-center rounded-lg bg-surface-2 text-ink-2 group-hover:text-accent [&_svg]:size-[18px]">
               {locationMeta[l.id]?.icon ?? <Folder />}

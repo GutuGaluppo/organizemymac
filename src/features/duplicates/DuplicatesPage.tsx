@@ -226,12 +226,12 @@ export function DuplicatesPage() {
         subtitle="Arquivos com conteúdo idêntico, comparados byte a byte (BLAKE3). Uma cópia de cada grupo sempre fica."
       />
       <div className="px-8 pb-2">
-        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface p-4">
+        <div className="flex flex-wrap items-center gap-3 rounded-xl glass p-4">
           <button onClick={choose} disabled={running} className="flex h-8 max-w-sm items-center gap-2 rounded-lg border border-line bg-surface-2 px-3 text-[12.5px] hover:border-accent/50">
             <FolderOpen className="size-4 shrink-0 text-accent" />
             <span className="truncate">{effectiveRoot === home ? "Pasta pessoal (~)" : shortPath(effectiveRoot, home)}</span>
           </button>
-          <div className="inline-flex rounded-lg border border-line bg-surface p-0.5">
+          <div className="inline-flex rounded-lg glass p-0.5">
             {sizes.map((s) => (
               <button
                 key={s.value}

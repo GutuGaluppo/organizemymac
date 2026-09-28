@@ -17,6 +17,8 @@ export type Module = {
   label: string;
   icon: string;
   badge?: string;
+  /** What the module looks at, shown large on the home page cards. */
+  tagline?: string;
   /** Sections inside the module; the first one opens when the module is chosen. */
   sections: { id: Section; label: string; job?: string }[];
 };
@@ -34,6 +36,7 @@ export const modules: Module[] = [
   {
     id: "cleanup",
     label: "Limpeza",
+    tagline: "Caches, logs e sobras",
     icon: limpeza,
     sections: [
       { id: "cleanup", label: "Limpeza avançada" },
@@ -45,6 +48,7 @@ export const modules: Module[] = [
   {
     id: "security",
     label: "Segurança",
+    tagline: "Auditoria do sistema",
     icon: seguranca,
     badge: "beta",
     sections: [{ id: "security", label: "Auditoria de segurança", job: "security" }],
@@ -52,12 +56,14 @@ export const modules: Module[] = [
   {
     id: "performance",
     label: "Desempenho",
+    tagline: "CPU, memória e bateria",
     icon: desempenho,
     sections: [{ id: "performance", label: "Desempenho" }],
   },
   {
     id: "apps",
     label: "Aplicativos",
+    tagline: "Apps e o que eles deixam",
     icon: aplicativos,
     sections: [
       { id: "apps", label: "Aplicativos", job: "apps" },
@@ -68,6 +74,7 @@ export const modules: Module[] = [
   {
     id: "clutter",
     label: "Minha bagunça",
+    tagline: "Grandes, antigos e cópias",
     icon: minhaBagunca,
     sections: [
       { id: "largeFiles", label: "Grandes e antigos", job: "largeFiles" },

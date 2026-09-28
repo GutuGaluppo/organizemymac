@@ -36,7 +36,7 @@ const typePresets: { label: string; value: FileCategory[] }[] = [
 
 function Chips<T>({ options, value, onChange }: { options: { label: string; value: T }[]; value: T; onChange: (v: T) => void }) {
   return (
-    <div className="inline-flex rounded-lg border border-line bg-surface p-0.5">
+    <div className="inline-flex rounded-lg glass p-0.5">
       {options.map((o) => {
         const active = JSON.stringify(o.value) === JSON.stringify(value);
         return (
@@ -108,7 +108,7 @@ export function LargeFilesPage() {
         subtitle="Encontre os arquivos que mais ocupam espaço e os que você não abre há muito tempo. Arquivos dentro de apps e bibliotecas (Fotos, Música) não são listados separadamente."
       />
       <div className="px-8 pb-2">
-        <div className="space-y-3 rounded-xl border border-line bg-surface p-4">
+        <div className="space-y-3 rounded-xl glass p-4">
           <div className="flex flex-wrap items-center gap-3">
             <span className="w-16 text-[12px] text-ink-3">Onde</span>
             <button

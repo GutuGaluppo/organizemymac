@@ -84,10 +84,10 @@ export function AppsPage() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Buscar app"
-                  className="h-8 w-56 rounded-lg border border-line bg-surface pr-3 pl-8 text-[12.5px] outline-none focus:border-accent"
+                  className="h-8 w-56 rounded-lg glass pr-3 pl-8 text-[12.5px] outline-none focus:border-accent"
                 />
               </div>
-              <div className="inline-flex rounded-lg border border-line bg-surface p-0.5">
+              <div className="inline-flex rounded-lg glass p-0.5">
                 {tab("all", `Todos (${formatCount(r.apps.length)})`)}
                 {tab("unused", `Sem uso há 6 meses (${formatCount(unusedCount)})`)}
                 {tab("appStore", "App Store")}
@@ -95,7 +95,7 @@ export function AppsPage() {
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as Sort)}
-                className="h-8 rounded-lg border border-line bg-surface px-2 text-[12.5px]"
+                className="h-8 rounded-lg glass px-2 text-[12.5px]"
               >
                 <option value="size">Maior primeiro</option>
                 <option value="name">Nome</option>

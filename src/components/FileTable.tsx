@@ -107,7 +107,7 @@ export function FileTable({
   const grid = "grid grid-cols-[22px_minmax(0,2.2fr)_88px_110px_110px_minmax(0,1.6fr)_76px] items-center gap-3 px-4";
 
   return (
-    <div className="overflow-hidden rounded-xl border border-line bg-surface">
+    <div className="overflow-hidden rounded-xl glass">
       <div className={`${grid} h-8 border-b border-line bg-surface-2 text-[11px] font-medium text-ink-3`}>
         <Checkbox
           label="Selecionar todos"

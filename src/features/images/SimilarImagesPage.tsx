@@ -66,7 +66,7 @@ function SensitivityChips({ value, onChange }: { value: Sensitivity; onChange: (
     { v: "normal", label: "Parecidas" },
   ];
   return (
-    <div className="inline-flex rounded-lg border border-line bg-surface p-0.5">
+    <div className="inline-flex rounded-lg glass p-0.5">
       {opts.map((o) => (
         <button key={o.v} onClick={() => onChange(o.v)} className={`h-7 rounded-md px-2.5 text-[12px] ${value === o.v ? "bg-accent font-medium text-accent-ink" : "text-ink-2 hover:text-ink"}`}>
           {o.label}
@@ -78,7 +78,7 @@ function SensitivityChips({ value, onChange }: { value: Sensitivity; onChange: (
 
 function Tile({ children, selected, keep, onToggle, disabled, footer }: { children: React.ReactNode; selected: boolean; keep: boolean; onToggle: () => void; disabled: boolean; footer: React.ReactNode }) {
   return (
-    <div className={`group relative rounded-xl border p-2 transition ${selected ? "border-danger/50 bg-danger-soft" : "border-line bg-surface"}`}>
+    <div className={`group relative rounded-xl border p-2 transition ${selected ? "border-danger/50 bg-danger-soft" : "glass"}`}>
       <button className="block w-full" onClick={onToggle} disabled={disabled} title={disabled ? "Pelo menos uma imagem de cada grupo fica" : undefined}>
         {children}
       </button>
@@ -125,7 +125,7 @@ function FolderMode() {
 
   return (
     <>
-      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface p-4">
+      <div className="flex flex-wrap items-center gap-3 rounded-xl glass p-4">
         <button
           onClick={async () => {
             const dir = await open({ directory: true, title: "Onde procurar imagens parecidas" });
@@ -290,7 +290,7 @@ function PhotosMode() {
 
   return (
     <>
-      <div className="flex items-center gap-3 rounded-xl border border-line bg-surface p-4">
+      <div className="flex items-center gap-3 rounded-xl glass p-4">
         <span className="flex items-center gap-2 text-[12.5px] text-ink-2">
           <Library className="size-4 text-accent" /> Biblioteca do Fotos
         </span>
@@ -338,7 +338,7 @@ function PhotosMode() {
             </Card>
           ))}
           {r.groups.length > 0 && (
-            <div className="sticky bottom-0 -mx-8 flex items-center gap-3 border-t border-line bg-surface-2/90 px-8 py-3 backdrop-blur">
+            <div className="sticky bottom-0 -mx-8 flex items-center gap-3 glass-bar px-8 py-3">
               <div className="flex-1 text-[12.5px] text-ink-2">{formatCount(selected.size)} fotos selecionadas</div>
               <Button variant="primary" disabled={!selected.size} onClick={() => setConfirm(true)}>
                 Apagar no Fotos…
@@ -375,7 +375,7 @@ export function SimilarImagesPage() {
         title="Imagens parecidas"
         subtitle="Compara o conteúdo das imagens com o Vision da Apple, não só os bytes: acha cópias redimensionadas, convertidas e fotos quase iguais."
         actions={
-          <div className="inline-flex rounded-lg border border-line bg-surface p-0.5">
+          <div className="inline-flex rounded-lg glass p-0.5">
             {(["folder", "photos"] as const).map((m) => (
               <button key={m} onClick={() => setMode(m)} className={`h-7 rounded-md px-3 text-[12px] ${mode === m ? "bg-accent font-medium text-accent-ink" : "text-ink-2 hover:text-ink"}`}>
                 {m === "folder" ? "Pasta" : "Fotos"}

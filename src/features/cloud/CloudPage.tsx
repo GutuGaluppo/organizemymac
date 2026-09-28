@@ -120,7 +120,7 @@ function Usage({ usage, home }: { usage: CloudUsage; home?: string }) {
         </div>
       )}
       {usage.canEvict && files.length > 0 && (
-        <div className="sticky bottom-0 -mx-8 flex items-center gap-3 border-t border-line bg-surface-2/90 px-8 py-3 backdrop-blur">
+        <div className="sticky bottom-0 -mx-8 flex items-center gap-3 glass-bar px-8 py-3">
           <div className="flex-1 text-[12.5px] text-ink-2">
             {selected.size ? `${formatCount(selected.size)} arquivos · ${formatBytes(bytes)} liberados neste Mac` : "Escolha arquivos para deixar só no iCloud."}
           </div>
@@ -182,7 +182,7 @@ export function CloudPage() {
               key={f.path}
               onClick={() => measure(f)}
               disabled={running}
-              className={`flex items-center gap-3 rounded-xl border p-4 text-left transition ${current?.path === f.path ? "border-accent bg-accent-soft" : "border-line bg-surface hover:border-accent/50"}`}
+              className={`flex items-center gap-3 rounded-xl border p-4 text-left transition ${current?.path === f.path ? "border-accent bg-accent-soft" : "glass hover:border-accent/50"}`}
             >
               <span className="grid size-9 place-items-center rounded-lg bg-surface-2 text-accent">
                 <CloudDownload className="size-[18px]" />

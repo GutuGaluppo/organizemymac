@@ -64,7 +64,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   ];
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/25 backdrop-blur-sm p-6">
-      <div className="w-full max-w-[560px] rounded-2xl border border-line bg-surface p-8 shadow-2xl">
+      <div className="w-full max-w-[560px] glass-strong rounded-2xl p-8">
         <h1 className="text-[22px] font-semibold tracking-tight">Bem-vindo ao OrganizeMyMac</h1>
         <p className="mt-1.5 text-ink-2">Entenda o que ocupa espaço no seu Mac e remova o que não precisa, com segurança.</p>
 

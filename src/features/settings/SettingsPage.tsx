@@ -38,7 +38,7 @@ function MenuBarSection() {
           disabled={!data.enabled}
           value={data.title}
           onChange={(e) => save({ ...data, title: e.target.value as MenuBarSettings["title"] })}
-          className="h-7 rounded-md border border-line bg-surface px-2 disabled:opacity-50"
+          className="h-7 rounded-md glass px-2 disabled:opacity-50"
         >
           <option value="icon">Nada (só o ícone)</option>
           <option value="cpu">Uso de CPU</option>

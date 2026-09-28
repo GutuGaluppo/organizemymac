@@ -92,7 +92,7 @@ export function SecurityPage() {
         {r && !running && (
           <>
             <div className="flex flex-wrap items-center gap-3">
-              <div className="inline-flex rounded-lg border border-line bg-surface p-0.5">
+              <div className="inline-flex rounded-lg glass p-0.5">
                 {(["persistence", "apps"] as const).map((t) => (
                   <button key={t} onClick={() => setTab(t)} className={`h-7 rounded-md px-3 text-[12px] ${tab === t ? "bg-accent font-medium text-accent-ink" : "text-ink-2 hover:text-ink"}`}>
                     {t === "persistence" ? `Itens de início (${r.persistence.length})` : `Apps (${r.apps.length})`}

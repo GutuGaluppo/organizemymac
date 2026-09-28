@@ -150,7 +150,7 @@ export function PerformancePage() {
         <div>
           <div className="mb-2 flex items-center gap-3">
             <h2 className="text-[13px] font-semibold">Processos por memória</h2>
-            <div className="inline-flex rounded-lg border border-line bg-surface p-0.5">
+            <div className="inline-flex rounded-lg glass p-0.5">
               {categories.map((c) => (
                 <button
                   key={c.id}

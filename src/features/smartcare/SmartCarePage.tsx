@@ -4,7 +4,9 @@ import { AlertTriangle, AppWindow, Check, ChevronDown, ChevronRight, Copy, Downl
 import { api, errorMessage } from "../../lib/ipc";
 import { useJob, useJobs } from "../../stores/jobs";
 import { useNav } from "../../stores/nav";
-import { Badge, Button, Card, ErrorNote, PageHeader } from "../../components/ui";
+import { Badge, Button, Card, ErrorNote } from "../../components/ui";
+import { GlassTile, RoundAction, TileButton } from "../../components/GlassTile";
+import { modules, smartCare } from "../../app/modules";
 import { Modal } from "../../components/ReviewDialog";
 import { useHome } from "../scanner/ScannerPage";
 import { ConfidenceBadge, kindLabel } from "../applications/shared";
@@ -33,6 +35,7 @@ function Section({
   onToggle,
   onAll,
   footer,
+  defaultOpen = false,
 }: {
   icon: ReactNode;
   title: string;
@@ -42,8 +45,9 @@ function Section({
   onToggle: (key: string) => void;
   onAll?: (value: boolean) => void;
   footer?: ReactNode;
+  defaultOpen?: boolean;
 }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen);
   const chosen = rows.filter((r) => selected.has(r.key));
   const bytes = chosen.reduce((s, r) => s + r.size, 0);
   if (!rows.length) return null;
@@ -92,17 +96,9 @@ function Section({
   );
 }
 
-function Summary({ icon, label, value, hint }: { icon: ReactNode; label: string; value: string; hint?: string }) {
-  return (
-    <div className="rounded-xl border border-line bg-surface p-4">
-      <div className="flex items-center gap-2 text-[12px] text-ink-3 [&_svg]:size-4">
-        {icon} {label}
-      </div>
-      <div className="tabular mt-1.5 text-[20px] font-semibold">{value}</div>
-      {hint && <div className="text-[11.5px] text-ink-3">{hint}</div>}
-    </div>
-  );
-}
+const tile = (id: string) => [smartCare, ...modules].find((m) => m.id === id)!;
+
+type Focus = "downloads" | "clutter" | "apps";
 
 export function SmartCarePage() {
   const home = useHome();
@@ -117,6 +113,7 @@ export function SmartCarePage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [outcomes, setOutcomes] = useState<OperationOutcome[] | null>(null);
+  const [focus, setFocus] = useState<Focus | null>(null);
   const r = job.result ?? undefined;
   const running = job.status === "running";
 
@@ -150,6 +147,29 @@ export function SmartCarePage() {
       }
       return next;
     });
+
+  // A tile's checkbox restores the default selection of its category or clears it. It never marks
+  // everything: that would select every copy of a duplicate.
+  const defaults = useMemo(() => {
+    if (!r) return null;
+    return {
+      downloads: r.downloads.filter((d) => d.selected).map((d) => `dl:${d.path}`),
+      duplicates: r.duplicates.flatMap((g) => g.files.filter((f) => f.selected).map((f) => `dup:${f.path}`)),
+      leftovers: r.leftovers.flatMap((g) => g.items.filter((i) => i.selected).map((i) => `lo:${i.path}`)),
+    };
+  }, [r]);
+  const prefix = { downloads: "dl:", duplicates: "dup:", leftovers: "lo:" } as const;
+  const categoryOn = (c: keyof typeof prefix) => [...selected].some((k) => k.startsWith(prefix[c]));
+  const setCategory = (c: keyof typeof prefix, on: boolean) =>
+    setSelected((prev) => {
+      const next = new Set([...prev].filter((k) => !k.startsWith(prefix[c])));
+      if (on && defaults) for (const k of defaults[c]) next.add(k);
+      return next;
+    });
+  const review = (f: Focus) => {
+    setFocus(f);
+    requestAnimationFrame(() => document.getElementById("care-review")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  };
 
   const rows = useMemo(() => {
     if (!r) return null;
@@ -219,129 +239,189 @@ export function SmartCarePage() {
 
   const stageIndex = stages.findIndex((s) => s.id === job.stage?.stage);
 
+  const downloadsBytes = r ? r.downloads.filter((d) => d.selected).reduce((s, d) => s + d.sizeLogical, 0) : 0;
+  const duplicatesBytes = r ? r.duplicates.reduce((s, g) => s + g.wasted, 0) : 0;
+  const leftoversBytes = r ? r.leftovers.reduce((s, g) => s + g.items.reduce((a, i) => a + i.size, 0), 0) : 0;
+  const nothing = (text: string) => <span className="text-ink-2">{text}</span>;
+
   return (
     <div className="h-full overflow-y-auto">
-      <PageHeader
-        title="Cuidado inteligente"
-        subtitle="Uma análise que junta Lixeira, Downloads, duplicados, arquivos esquecidos, apps sem uso e restos de apps. Você revisa tudo antes de qualquer remoção."
-        actions={
-          r &&
-          !running && (
+      <header className="drag relative px-8 pt-12 pb-7 text-center">
+        <h1 className="text-[30px] font-semibold tracking-tight">
+          {running ? "Analisando o seu Mac…" : r ? "Análise pronta. Veja o que encontramos:" : "Cuidado inteligente"}
+        </h1>
+        <p className="mx-auto mt-1.5 max-w-xl text-[13.5px] text-ink-2">
+          {r && !running
+            ? `Até ${formatBytes(reclaimable)} para liberar · análise em ${(r.durationMs / 1000).toFixed(0)} s. Você revisa tudo antes de qualquer remoção.`
+            : "Lixeira, Downloads, duplicados, arquivos esquecidos e restos de apps numa análise só. Nada é alterado na análise."}
+        </p>
+        {r && !running && (
+          <div className="absolute top-12 right-8 [-webkit-app-region:no-drag]">
             <Button variant="ghost" onClick={() => reset(MODULE)}>
               Nova análise
             </Button>
-          )
-        }
-      />
-      <div className="space-y-5 px-8 pb-4">
+          </div>
+        )}
+      </header>
+
+      <div className="space-y-4 px-8 pb-4">
         {job.status === "failed" && <ErrorNote>{job.error}</ErrorNote>}
         {error && <ErrorNote>{error}</ErrorNote>}
 
         {(job.status === "idle" || job.status === "cancelled" || (job.status === "done" && !r)) && (
-          <Card className="flex flex-col items-center px-8 py-12 text-center">
-            <div className="grid size-16 place-items-center rounded-2xl bg-accent-soft text-accent">
-              <Sparkles className="size-7" />
+          <div className="flex flex-col items-center pt-6 pb-10">
+            <img src={smartCare.icon} alt="" draggable={false} className="size-[180px] object-contain drop-shadow-[0_20px_40px_rgb(0_0_0/0.4)]" />
+            <div className="mt-8">
+              <RoundAction onClick={() => start(MODULE, "start_smart_care", {})}>Analisar</RoundAction>
             </div>
-            <h2 className="mt-4 text-[17px] font-semibold">Analise o Mac de uma vez</h2>
-            <p className="mt-1.5 max-w-md text-ink-2">Leva de alguns segundos a poucos minutos. Nada é alterado na análise.</p>
-            <Button variant="primary" className="mt-5" onClick={() => start(MODULE, "start_smart_care", {})}>
-              Analisar
-            </Button>
-          </Card>
+            <p className="mt-3 text-[12px] text-ink-2">Leva de alguns segundos a poucos minutos.</p>
+          </div>
         )}
 
         {running && (
-          <Card className="p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="text-[15px] font-semibold">Analisando</div>
-              <Button size="sm" onClick={() => useJobs.getState().cancel(MODULE)}>
-                Cancelar
-              </Button>
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              {stages.map((s, i) => (
-                <div key={s.id} className={`flex items-center gap-2 rounded-lg px-3 py-2 text-[12.5px] ${i === stageIndex ? "bg-accent-soft text-accent" : i < stageIndex ? "text-ink-2" : "text-ink-3"}`}>
-                  {i < stageIndex ? <Check className="size-4 text-safe" /> : i === stageIndex ? <Loader2 className="size-4 animate-spin" /> : <span className="size-4" />}
-                  {s.label}
-                </div>
-              ))}
-            </div>
-            {job.progress && stageIndex === 2 && <div className="mt-3 text-[11.5px] text-ink-3">{formatCount(job.progress.files)} arquivos lidos</div>}
-          </Card>
+          <div className="flex flex-col items-center pt-2 pb-8">
+            <img src={smartCare.icon} alt="" draggable={false} className="size-[150px] animate-pulse object-contain drop-shadow-[0_20px_40px_rgb(0_0_0/0.4)]" />
+            <Card className="mt-8 w-full max-w-[640px] p-5">
+              <div className="grid grid-cols-3 gap-2">
+                {stages.map((s, i) => (
+                  <div key={s.id} className={`flex items-center gap-2 rounded-lg px-3 py-2 text-[12.5px] ${i === stageIndex ? "bg-accent-soft text-ink" : i < stageIndex ? "text-ink-2" : "text-ink-3"}`}>
+                    {i < stageIndex ? <Check className="size-4 text-safe" /> : i === stageIndex ? <Loader2 className="size-4 animate-spin" /> : <span className="size-4" />}
+                    {s.label}
+                  </div>
+                ))}
+              </div>
+              {job.progress && stageIndex === 2 && <div className="mt-3 text-center text-[11.5px] text-ink-3">{formatCount(job.progress.files)} arquivos lidos</div>}
+            </Card>
+            <Button className="mt-4" onClick={() => useJobs.getState().cancel(MODULE)}>
+              Cancelar
+            </Button>
+          </div>
         )}
 
         {r && rows && !running && (
           <>
-            <div className="grid grid-cols-5 gap-3">
-              <Summary icon={<Sparkles />} label="Pode liberar" value={formatBytes(reclaimable)} hint={`em ${(r.durationMs / 1000).toFixed(0)} s de análise`} />
-              <Summary icon={<Download />} label="Downloads" value={formatBytes(r.downloads.filter((d) => d.selected).reduce((s, d) => s + d.sizeLogical, 0))} hint="instaladores antigos" />
-              <Summary icon={<Copy />} label="Duplicados" value={formatBytes(r.duplicates.reduce((s, g) => s + g.wasted, 0))} hint={`${formatCount(r.duplicates.length)} grupos`} />
-              <Summary icon={<Trash2 />} label="Lixeira" value={r.trash.readable ? formatBytes(r.trash.bytes) : "—"} hint={r.trash.readable ? undefined : "sem acesso"} />
-              <Summary icon={<AppWindow />} label="Apps" value={`${formatCount(r.unusedApps.length)} sem uso`} hint="há mais de 6 meses" />
+            <div className="grid grid-cols-6 gap-4">
+              <GlassTile
+                className="col-span-2"
+                tint="cleanup"
+                icon={tile("cleanup").icon}
+                label="Downloads"
+                checked={categoryOn("downloads")}
+                onCheck={rows.downloads.length ? (v) => setCategory("downloads", v) : undefined}
+                value={downloadsBytes ? formatBytes(downloadsBytes) : nothing("Nada a limpar")}
+                caption={downloadsBytes ? "em instaladores antigos" : "em Downloads"}
+                action={rows.downloads.length > 0 && <TileButton onClick={() => review("downloads")}>Revisar</TileButton>}
+              />
+              <GlassTile
+                className="col-span-2"
+                tint="clutter"
+                icon={tile("clutter").icon}
+                label="Minha bagunça"
+                checked={categoryOn("duplicates")}
+                onCheck={rows.duplicates.length ? (v) => setCategory("duplicates", v) : undefined}
+                value={duplicatesBytes ? formatBytes(duplicatesBytes) : nothing("Sem duplicados")}
+                caption={
+                  duplicatesBytes
+                    ? r.largeOld.length
+                      ? `em cópias · ${formatCount(r.largeOld.length)} ${r.largeOld.length === 1 ? "esquecido" : "esquecidos"}`
+                      : "em cópias duplicadas"
+                    : r.largeOld.length
+                      ? `${formatCount(r.largeOld.length)} arquivos grandes esquecidos`
+                      : "acima de 10 MB"
+                }
+                action={(rows.duplicates.length > 0 || rows.largeOld.length > 0) && <TileButton onClick={() => review("clutter")}>Revisar</TileButton>}
+              />
+              <GlassTile
+                className="col-span-2"
+                tint="apps"
+                icon={tile("apps").icon}
+                label="Aplicativos"
+                checked={categoryOn("leftovers")}
+                onCheck={rows.leftovers.length ? (v) => setCategory("leftovers", v) : undefined}
+                value={leftoversBytes ? formatBytes(leftoversBytes) : nothing("Sem restos")}
+                caption={`em restos de apps · ${formatCount(r.unusedApps.length)} sem uso`}
+                action={(rows.leftovers.length > 0 || r.unusedApps.length > 0) && <TileButton onClick={() => review("apps")}>Revisar</TileButton>}
+              />
+
+              <GlassTile
+                className="col-span-4"
+                tint="smartCare"
+                icon={smartCare.icon}
+                label="Recomendações"
+                value={r.recommendations.length ? undefined : nothing("Tudo em ordem por aqui")}
+              >
+                {r.recommendations.length > 0 && (
+                  <ul className="relative mt-3 max-w-[78%] space-y-2">
+                    {r.recommendations.slice(0, 4).map((rec) => (
+                      <li key={rec.id} className="flex items-start gap-2">
+                        {rec.level === "high" ? <AlertTriangle className="mt-0.5 size-4 shrink-0 text-review" /> : <Sparkles className="mt-0.5 size-4 shrink-0 text-ink-2" />}
+                        <span className="min-w-0">
+                          <span className="block text-[13.5px] font-semibold">{rec.title}</span>
+                          <span className="block truncate text-[12px] text-ink-2">{rec.detail}</span>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </GlassTile>
+              <GlassTile
+                className="col-span-2"
+                tint="cleanup"
+                icon={<Trash2 />}
+                label="Lixeira"
+                checked={emptyTrash}
+                onCheck={r.trash.readable && r.trash.items.length > 0 ? setEmptyTrash : undefined}
+                value={!r.trash.readable ? nothing("Sem acesso") : r.trash.bytes ? formatBytes(r.trash.bytes) : nothing("Vazia")}
+                caption={r.trash.readable && r.trash.bytes ? (emptyTrash ? <span className="text-review">será apagada de vez</span> : "marque para esvaziar") : undefined}
+              />
             </div>
 
-            {r.recommendations.length > 0 && (
-              <div className="space-y-2">
-                <h2 className="text-[13px] font-semibold">Recomendações</h2>
-                {r.recommendations.map((rec) => (
-                  <div key={rec.id} className={`flex items-start gap-3 rounded-xl border px-4 py-3 ${rec.level === "high" ? "border-review/40 bg-[color-mix(in_srgb,var(--review)_10%,transparent)]" : "border-line bg-surface"}`}>
-                    {rec.level === "high" ? <AlertTriangle className="mt-0.5 size-4 text-review" /> : <Sparkles className="mt-0.5 size-4 text-accent" />}
-                    <div>
-                      <div className="font-medium">{rec.title}</div>
-                      <div className="text-[12.5px] text-ink-2">{rec.detail}</div>
-                    </div>
-                  </div>
-                ))}
+            {focus && (
+              <div id="care-review" className="scroll-mt-4 space-y-3 pt-4">
+                <h2 className="text-[15px] font-semibold">
+                  {focus === "downloads" ? "Downloads" : focus === "clutter" ? "Minha bagunça" : "Aplicativos"}
+                </h2>
+                {focus === "downloads" && (
+                  <Section defaultOpen icon={<Download />} title="Downloads" rows={rows.downloads} selected={selected} onToggle={toggle} onAll={(v) => setMany(rows.downloads.map((x) => x.key), v)} note="Instaladores antigos já vêm marcados; o resto fica para você decidir." />
+                )}
+                {focus === "clutter" && (
+                  <>
+                    <Section defaultOpen icon={<Copy />} title="Duplicados (acima de 10 MB)" rows={rows.duplicates} selected={selected} onToggle={toggle} note="Uma cópia de cada grupo sempre fica. Duplicados menores estão na seção Duplicados." />
+                    <Section icon={<FileSearch />} title="Arquivos grandes e esquecidos" rows={rows.largeOld} selected={selected} onToggle={toggle} note="Mais de 500 MB e sem modificação há mais de um ano. Nenhum vem marcado." />
+                  </>
+                )}
+                {focus === "apps" && (
+                  <>
+                    <Section defaultOpen icon={<PackageX />} title="Restos de apps desinstalados" rows={rows.leftovers} selected={selected} onToggle={toggle} onAll={(v) => setMany(rows.leftovers.map((x) => x.key), v)} />
+                    {r.unusedApps.length > 0 && (
+                      <Card className="flex items-center gap-3 px-4 py-3">
+                        <span className="grid size-8 place-items-center rounded-lg bg-accent-soft text-accent">
+                          <AppWindow className="size-4" />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="font-medium">{formatCount(r.unusedApps.length)} apps sem uso há mais de 6 meses</div>
+                          <div className="truncate text-[12px] text-ink-3">{r.unusedApps.map((a) => a.name).join(", ")}</div>
+                        </div>
+                        <Button size="sm" onClick={() => go("apps")}>
+                          Ver em Aplicativos
+                        </Button>
+                      </Card>
+                    )}
+                  </>
+                )}
               </div>
             )}
 
-            <div className="space-y-3">
-              <h2 className="text-[13px] font-semibold">Revisão</h2>
-              {r.trash.readable && r.trash.items.length > 0 && (
-                <Card className="flex items-center gap-3 px-4 py-3">
-                  <span className="grid size-8 place-items-center rounded-lg bg-danger-soft text-danger">
-                    <Trash2 className="size-4" />
-                  </span>
-                  <label className="flex flex-1 cursor-pointer items-center gap-3">
-                    <input type="checkbox" className="size-3.5 accent-[var(--accent)]" checked={emptyTrash} onChange={(e) => setEmptyTrash(e.target.checked)} />
-                    <span>
-                      <span className="block font-medium">Esvaziar a Lixeira</span>
-                      <span className="block text-[12px] text-ink-3">
-                        Apaga de vez {r.trash.items.length === 1 ? "o item que está" : `os ${formatCount(r.trash.items.length)} itens que estão`} lá agora (
-                        {formatBytes(r.trash.bytes)}). O que esta limpeza mover para a Lixeira não é apagado.
-                      </span>
-                    </span>
-                  </label>
-                </Card>
-              )}
-              <Section icon={<Download />} title="Downloads" rows={rows.downloads} selected={selected} onToggle={toggle} onAll={(v) => setMany(rows.downloads.map((x) => x.key), v)} note="Instaladores antigos já vêm marcados; o resto fica para você decidir." />
-              <Section icon={<Copy />} title="Duplicados (acima de 10 MB)" rows={rows.duplicates} selected={selected} onToggle={toggle} note="Uma cópia de cada grupo sempre fica. Duplicados menores estão na seção Duplicados." />
-              <Section icon={<FileSearch />} title="Arquivos grandes e esquecidos" rows={rows.largeOld} selected={selected} onToggle={toggle} note="Mais de 500 MB e sem modificação há mais de um ano. Nenhum vem marcado." />
-              <Section icon={<PackageX />} title="Restos de apps desinstalados" rows={rows.leftovers} selected={selected} onToggle={toggle} onAll={(v) => setMany(rows.leftovers.map((x) => x.key), v)} />
-              {r.unusedApps.length > 0 && (
-                <Card className="flex items-center gap-3 px-4 py-3">
-                  <span className="grid size-8 place-items-center rounded-lg bg-accent-soft text-accent">
-                    <AppWindow className="size-4" />
-                  </span>
-                  <div className="flex-1">
-                    <div className="font-medium">{formatCount(r.unusedApps.length)} apps sem uso há mais de 6 meses</div>
-                    <div className="truncate text-[12px] text-ink-3">{r.unusedApps.map((a) => a.name).join(", ")}</div>
-                  </div>
-                  <Button size="sm" onClick={() => go("apps")}>
-                    Ver em Aplicativos
-                  </Button>
-                </Card>
-              )}
-            </div>
-
-            <div className="sticky bottom-0 -mx-8 flex items-center gap-3 border-t border-line bg-surface-2/90 px-8 py-3 backdrop-blur">
-              <div className="flex-1 text-[12.5px] text-ink-2">
+            <div className="pointer-events-none sticky bottom-0 -mx-8 flex flex-col items-center gap-1.5 bg-[linear-gradient(to_top,color-mix(in_srgb,var(--deep)_85%,transparent),transparent)] pt-10 pb-4">
+              <div className="pointer-events-auto">
+                <RoundAction disabled={!chosenCount && !emptyTrash} onClick={() => setConfirm(true)}>
+                  Limpar
+                </RoundAction>
+              </div>
+              <div className="text-[12px] text-ink-2">
                 <span className="font-medium text-ink">{formatCount(chosenCount + (emptyTrash ? 1 : 0))}</span> ações ·{" "}
                 <span className="tabular font-medium text-ink">{formatBytes(chosenBytes)}</span>
               </div>
-              <Button variant="primary" disabled={!chosenCount && !emptyTrash} onClick={() => setConfirm(true)}>
-                Limpar…
-              </Button>
             </div>
           </>
         )}

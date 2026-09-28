@@ -4,10 +4,12 @@ import { Loader2 } from "lucide-react";
 type Variant = "primary" | "secondary" | "ghost" | "danger";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-accent text-accent-ink hover:brightness-105 active:brightness-95 shadow-sm",
-  secondary: "bg-surface-2 text-ink border border-line hover:bg-surface-3",
+  primary:
+    "bg-[linear-gradient(160deg,var(--accent),var(--glow))] text-white hover:brightness-110 active:brightness-95 shadow-[inset_0_1px_0_rgb(255_255_255/0.35),0_8px_20px_-8px_var(--glow)]",
+  secondary: "glass text-ink hover:bg-white/20",
   ghost: "text-ink-2 hover:bg-surface-2 hover:text-ink",
-  danger: "bg-danger text-white hover:brightness-105 active:brightness-95 shadow-sm",
+  danger:
+    "bg-danger bg-[linear-gradient(180deg,rgb(255_255_255/0.25),transparent)] text-white hover:brightness-105 active:brightness-95 shadow-[inset_0_1px_0_rgb(255_255_255/0.35),0_6px_16px_-6px_color-mix(in_srgb,var(--danger)_60%,transparent)]",
 };
 
 export function Button({
@@ -24,7 +26,7 @@ export function Button({
     <button
       {...props}
       disabled={props.disabled || busy}
-      className={`inline-flex items-center justify-center rounded-md font-medium whitespace-nowrap transition disabled:opacity-45 disabled:pointer-events-none ${sizing} ${variants[variant]} ${className}`}
+      className={`inline-flex items-center justify-center rounded-lg font-medium whitespace-nowrap transition disabled:opacity-45 disabled:pointer-events-none ${sizing} ${variants[variant]} ${className}`}
     >
       {busy ? <Loader2 className="size-3.5 animate-spin" /> : icon}
       {children}
@@ -36,7 +38,7 @@ export function PageHeader({ title, subtitle, actions }: { title: string; subtit
   return (
     <header className="drag flex items-end justify-between gap-4 px-8 pt-9 pb-5">
       <div className="min-w-0">
-        <h1 className="text-[22px] font-semibold tracking-tight text-ink">{title}</h1>
+        <h1 className="text-[26px] font-semibold tracking-tight text-ink">{title}</h1>
         {subtitle && <p className="mt-1 text-[13px] text-ink-2 max-w-2xl">{subtitle}</p>}
       </div>
       {actions && <div className="flex shrink-0 items-center gap-2 [-webkit-app-region:no-drag]">{actions}</div>}
@@ -45,7 +47,7 @@ export function PageHeader({ title, subtitle, actions }: { title: string; subtit
 }
 
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <section className={`rounded-xl border border-line bg-surface ${className}`}>{children}</section>;
+  return <section className={`glass rounded-2xl ${className}`}>{children}</section>;
 }
 
 export function Stat({ label, value, hint }: { label: string; value: ReactNode; hint?: ReactNode }) {

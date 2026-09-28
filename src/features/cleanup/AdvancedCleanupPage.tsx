@@ -121,7 +121,7 @@ function AddRuleDialog({ onClose, home }: { onClose: () => void; home?: string }
         </div>
         <label className="block text-[12.5px]">
           <span className="text-ink-2">Nome</span>
-          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Builds antigos" className="mt-1 h-8 w-full rounded-lg border border-line bg-surface px-3 outline-none focus:border-accent" />
+          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Builds antigos" className="mt-1 h-8 w-full rounded-lg glass px-3 outline-none focus:border-accent" />
         </label>
         <div className="text-[12.5px]">
           <span className="text-ink-2">Pasta (dentro da pasta pessoal)</span>
@@ -137,7 +137,7 @@ function AddRuleDialog({ onClose, home }: { onClose: () => void; home?: string }
         </div>
         <label className="block text-[12.5px]">
           <span className="text-ink-2">Risco</span>
-          <select value={risk} onChange={(e) => setRisk(e.target.value as Risk)} className="mt-1 h-8 w-full rounded-lg border border-line bg-surface px-2">
+          <select value={risk} onChange={(e) => setRisk(e.target.value as Risk)} className="mt-1 h-8 w-full rounded-lg glass px-2">
             <option value="low">Baixo: o conteúdo é recriado sozinho</option>
             <option value="medium">Médio: revisar antes</option>
             <option value="high">Alto: dados que não voltam</option>

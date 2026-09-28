@@ -21,69 +21,83 @@
   --color-danger-soft: var(--danger-soft);
 }
 
+/* One vivid theme: the whole window sits on a deep gradient in the current module's colors and
+   every surface is translucent glass over it. Light and dark system appearance look the same. */
 :root {
-  color-scheme: light dark;
-  --surface: #ffffff;
-  --surface-2: #f6f6f8;
-  --surface-3: #ececf0;
-  --line: rgba(0, 0, 0, 0.09);
-  --ink: #1d1d1f;
-  --ink-2: #5b5b61;
-  --ink-3: #8e8e93;
-  --accent: #4f6cff;
-  --accent-soft: rgba(79, 108, 255, 0.12);
+  color-scheme: dark;
+  --surface: rgba(255, 255, 255, 0.1);
+  --surface-2: rgba(255, 255, 255, 0.06);
+  --surface-3: rgba(255, 255, 255, 0.12);
+  --line: rgba(255, 255, 255, 0.12);
+  --glass-edge: rgba(255, 255, 255, 0.2);
+  --glass-highlight: rgba(255, 255, 255, 0.28);
+  --glass-shadow: rgba(0, 0, 0, 0.35);
+  --ink: #ffffff;
+  --ink-2: rgba(255, 255, 255, 0.76);
+  --ink-3: rgba(255, 255, 255, 0.52);
   --accent-ink: #ffffff;
-  --safe: #1f9d55;
-  --review: #c77c02;
-  --danger: #d63b30;
-  --danger-soft: rgba(214, 59, 48, 0.1);
+  --safe: #4ade80;
+  --review: #fbbf24;
+  --danger: #ff6b6b;
+  --danger-soft: rgba(255, 107, 107, 0.16);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --surface: #1e1e20;
-    --surface-2: #26262a;
-    --surface-3: #313136;
-    --line: rgba(255, 255, 255, 0.09);
-    --ink: #f2f2f4;
-    --ink-2: #b4b4ba;
-    --ink-3: #85858c;
-    --accent: #9db2ff;
-    --accent-soft: rgba(157, 178, 255, 0.16);
-    --accent-ink: #0e1433;
-    --safe: #3ecf7a;
-    --review: #f0a82e;
-    --danger: #ff6b5e;
-    --danger-soft: rgba(255, 107, 94, 0.12);
-  }
-}
-
-/* Each module tints its pages with the color of its icon (see src/app/modules.ts). */
-[data-tint="smartCare"] { --tint: #c026d3; --tint-dark: #e879f9; }
-[data-tint="cleanup"] { --tint: #0f9f6e; --tint-dark: #34d399; }
-[data-tint="security"] { --tint: #2563eb; --tint-dark: #60a5fa; }
-[data-tint="performance"] { --tint: #ea6a0c; --tint-dark: #fb923c; }
-[data-tint="apps"] { --tint: #0891b2; --tint-dark: #22d3ee; }
-[data-tint="clutter"] { --tint: #7c4dff; --tint-dark: #a78bfa; }
-[data-tint="spaceMap"] { --tint: #0d9488; --tint-dark: #2dd4bf; }
-[data-tint="scanner"] { --tint: #4f46e5; --tint-dark: #818cf8; }
+/* Each module's colors, matching its icon (see src/app/modules.ts):
+   --tint is the bright accent, --glow the second hue of the gradient, --deep its dark base. */
+[data-tint] { --tint: #8ea2ff; --glow: #6d4bd8; --deep: #1b1650; }
+[data-tint="smartCare"] { --tint: #f07cf5; --glow: #b21fd0; --deep: #360b5e; }
+[data-tint="cleanup"] { --tint: #3ee0a2; --glow: #0e9f9a; --deep: #06302a; }
+[data-tint="security"] { --tint: #6cb0ff; --glow: #2d5bea; --deep: #0b1d5a; }
+[data-tint="performance"] { --tint: #ffa04d; --glow: #d9336f; --deep: #3a1208; }
+[data-tint="apps"] { --tint: #3fd9f0; --glow: #2563eb; --deep: #062a47; }
+[data-tint="clutter"] { --tint: #b69bff; --glow: #7c3aed; --deep: #1f1052; }
+[data-tint="spaceMap"] { --tint: #3fe0c8; --glow: #0a8fb0; --deep: #06302f; }
+[data-tint="scanner"] { --tint: #939dff; --glow: #4f46e5; --deep: #151a55; }
 
 [data-tint] {
-  --accent: var(--tint, #4f6cff);
-  --accent-soft: color-mix(in srgb, var(--accent) 12%, transparent);
-}
-@media (prefers-color-scheme: dark) {
-  [data-tint] {
-    --accent: var(--tint-dark, #9db2ff);
-    --accent-soft: color-mix(in srgb, var(--accent) 16%, transparent);
-  }
+  --accent: var(--tint);
+  --accent-soft: color-mix(in srgb, var(--tint) 18%, transparent);
+  --canvas: var(--deep);
 }
 
-/* Content pane: a soft wash of the page's color behind the header. */
+/* The window background: the module's gradient, shared by the sidebar and the page. */
 .page-canvas {
   background:
-    linear-gradient(to bottom, color-mix(in srgb, var(--accent) 9%, transparent), transparent 260px),
-    var(--surface-2);
+    radial-gradient(70% 65% at 100% 0%, color-mix(in srgb, var(--glow) 75%, transparent), transparent 70%),
+    radial-gradient(60% 55% at 10% 100%, color-mix(in srgb, var(--tint) 38%, transparent), transparent 70%),
+    radial-gradient(45% 45% at 55% 50%, color-mix(in srgb, var(--glow) 22%, transparent), transparent 80%),
+    linear-gradient(160deg, var(--deep), color-mix(in srgb, var(--deep) 55%, #04030c));
+  transition: background 0.4s ease;
+}
+
+/* Glass surface for cards, panels, segmented controls and fields. */
+@utility glass {
+  background-color: var(--surface);
+  border: 1px solid var(--glass-edge);
+  -webkit-backdrop-filter: blur(24px) saturate(170%);
+  backdrop-filter: blur(24px) saturate(170%);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 10px 30px -14px var(--glass-shadow);
+}
+
+/* Denser glass for dialogs that float over the page. */
+@utility glass-strong {
+  background-color: color-mix(in srgb, var(--deep, #1b1650) 82%, transparent);
+  border: 1px solid var(--glass-edge);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  backdrop-filter: blur(40px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 30px 80px -20px var(--glass-shadow);
+}
+
+/* Action bars pinned to the bottom of a scrolling page. */
+@utility glass-bar {
+  background-color: var(--surface);
+  border-top: 1px solid var(--glass-edge);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  backdrop-filter: blur(30px) saturate(180%);
 }
 
 html,

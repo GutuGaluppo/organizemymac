@@ -26,9 +26,9 @@ export function App() {
   const [onboarded, setOnboarded] = useState(hasOnboarded);
 
   return (
-    <div className="flex h-full">
+    <div data-tint={moduleOf(section)?.id ?? "default"} className="page-canvas flex h-full">
       <Sidebar />
-      <main data-tint={moduleOf(section)?.id ?? "default"} className="page-canvas min-w-0 flex-1 overflow-hidden rounded-tl-[10px] border-l border-line">
+      <main className="min-w-0 flex-1 overflow-hidden">
         {section === "overview" && <OverviewPage />}
         {section === "smartCare" && <SmartCarePage />}
         {section === "scanner" && <ScannerPage />}

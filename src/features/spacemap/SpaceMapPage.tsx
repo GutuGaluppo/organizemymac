@@ -266,7 +266,7 @@ export function SpaceMapPage() {
             </div>
           )}
           <div className="flex min-h-0 flex-1 gap-4 px-8 pb-4">
-            <div className="w-[300px] shrink-0 overflow-y-auto rounded-xl border border-line bg-surface p-1.5">
+            <div className="w-[300px] shrink-0 overflow-y-auto rounded-xl glass p-1.5">
               {node?.children?.map((c) => (
                 <OutlineRow key={c.path} scanId={r.id} node={c} depth={0} max={node.children![0].size} selected={new Set(picked.keys())} onOpen={setPath} onToggle={toggle} />
               ))}
@@ -278,7 +278,7 @@ export function SpaceMapPage() {
                 </div>
               )}
             </div>
-            <div className="min-w-0 flex-1 rounded-xl border border-line bg-surface p-1">
+            <div className="min-w-0 flex-1 rounded-xl glass p-1">
               {node && <Treemap node={node} selected={new Set(picked.keys())} onOpen={setPath} onToggle={toggle} />}
             </div>
           </div>

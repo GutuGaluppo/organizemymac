@@ -17,7 +17,7 @@ const confidenceBadge: Record<Confidence, ReactNode> = {
 export function Modal({ children, onClose, width = 620 }: { children: ReactNode; onClose?: () => void; width?: number }) {
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/25 p-6 backdrop-blur-[2px]" onMouseDown={(e) => e.target === e.currentTarget && onClose?.()}>
-      <div className="flex max-h-[86vh] w-full flex-col rounded-2xl border border-line bg-surface shadow-2xl" style={{ maxWidth: width }}>
+      <div className="flex max-h-[86vh] w-full flex-col glass-strong rounded-2xl" style={{ maxWidth: width }}>
         {children}
       </div>
     </div>
@@ -150,7 +150,7 @@ export function ReviewDialog({
 /** Sticky bar with the selection total and the review button. */
 export function SelectionBar({ count, bytes, onReview, extra }: { count: number; bytes: number; onReview: () => void; extra?: ReactNode }) {
   return (
-    <div className="sticky bottom-0 z-10 -mx-8 mt-4 flex items-center gap-3 border-t border-line bg-surface-2/90 px-8 py-3 backdrop-blur">
+    <div className="sticky bottom-0 z-10 -mx-8 mt-4 flex items-center gap-3 glass-bar px-8 py-3">
       <div className="flex-1 text-[12.5px] text-ink-2">
         {count ? (
           <>
