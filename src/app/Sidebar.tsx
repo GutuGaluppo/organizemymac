@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Activity, ArrowUpCircle, Brush, Cloud, Images, Sparkles, AppWindow, PackageX, Copy, Download, FileSearch, FolderSearch, LayoutGrid, Map as MapIcon, Settings, Trash2 } from "lucide-react";
+import { Activity, ArrowUpCircle, ShieldQuestion, Brush, Cloud, Images, Sparkles, AppWindow, PackageX, Copy, Download, FileSearch, FolderSearch, LayoutGrid, Map as MapIcon, Settings, Trash2 } from "lucide-react";
 import { useNav, type Section } from "../stores/nav";
 import { useJobs } from "../stores/jobs";
 
@@ -35,7 +35,13 @@ const groups: Group[] = [
       { id: "updates", label: "Atualizações", icon: <ArrowUpCircle />, job: "updates" },
     ],
   },
-  { label: "Mac", items: [{ id: "performance", label: "Desempenho", icon: <Activity /> }] },
+  {
+    label: "Mac",
+    items: [
+      { id: "performance", label: "Desempenho", icon: <Activity /> },
+      { id: "security", label: "Auditoria de segurança", icon: <ShieldQuestion />, job: "security" },
+    ],
+  },
 ];
 
 function NavItem({ item }: { item: Item }) {

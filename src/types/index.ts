@@ -380,3 +380,30 @@ export type UpdateInfo = {
 };
 
 export type UpdatesResult = { apps: UpdateInfo[]; checkedOnline: boolean };
+
+export type SignatureKind = "apple" | "appStore" | "developerId" | "development" | "adHoc" | "unsigned" | "invalid" | "unknown";
+
+export type Signature = { kind: SignatureKind; teamId?: string | null; authority?: string | null };
+
+export type FindingLevel = "info" | "notice" | "attention";
+
+export type Finding = { level: FindingLevel; code: string };
+
+export type PersistenceItem = {
+  scope: "user" | "allUsers" | "system";
+  plist: string;
+  label?: string | null;
+  program?: string | null;
+  arguments: string[];
+  runAtLoad: boolean;
+  keepAlive: boolean;
+  disabled: boolean;
+  programExists: boolean;
+  signature?: Signature | null;
+  app?: string | null;
+  findings: Finding[];
+};
+
+export type AppAudit = { path: string; name: string; signature: Signature; gatekeeper?: string | null; gatekeeperChecked: boolean; quarantined: boolean; findings: Finding[] };
+
+export type SecurityAudit = { persistence: PersistenceItem[]; apps: AppAudit[] };

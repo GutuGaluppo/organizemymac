@@ -9,6 +9,7 @@ pub mod files;
 pub mod health;
 pub mod images;
 pub mod scan;
+pub mod security;
 pub mod smart_care;
 pub mod system;
 

@@ -2,7 +2,7 @@
 // answered with fictitious data so screens can be designed and checked without the Rust core.
 // Never bundled into the app (imported only when `import.meta.env.DEV` and outside Tauri).
 import { mockIPC } from "@tauri-apps/api/mocks";
-import type { CloudUsage, UpdatesResult, RulesReport, SmartCareReport, SimilarResult, AppInfo, AppsResult, Leftover, OrphansResult, UninstallPlan, DuplicateGroup, DuplicatesResult, DownloadItem, DownloadsResult, FileCategory, FileEntry, FindResult, ScanResult, StorageNode } from "../types";
+import type { SecurityAudit, CloudUsage, UpdatesResult, RulesReport, SmartCareReport, SimilarResult, AppInfo, AppsResult, Leftover, OrphansResult, UninstallPlan, DuplicateGroup, DuplicatesResult, DownloadItem, DownloadsResult, FileCategory, FileEntry, FindResult, ScanResult, StorageNode } from "../types";
 
 const HOME = "/Users/demo";
 const now = Date.now();
@@ -542,6 +542,20 @@ registerMock("start_update_check", ({ online, onEvent }) =>
 );
 registerMock("open_app_store_page", () => null);
 registerMock("open_application", () => null);
+
+registerMock("start_security_audit", ({ onEvent }) =>
+  streamJob<SecurityAudit>(onEvent, "/Library", () => ({
+    persistence: [
+      { scope: "user", plist: `${HOME}/Library/LaunchAgents/com.apple.update.helper.plist`, label: "com.apple.update.helper", program: "/Users/Shared/.cache/helper", arguments: [], runAtLoad: true, keepAlive: true, disabled: false, programExists: true, signature: { kind: "unsigned" }, app: null, findings: [{ level: "attention", code: "unsigned" }, { level: "attention", code: "applePrefixNotApple" }, { level: "attention", code: "temporaryLocation" }] },
+      { scope: "user", plist: `${HOME}/Library/LaunchAgents/com.glaido.app.plist`, label: "com.glaido.app", program: "/Applications/Glaido.app/Contents/MacOS/Glaido", arguments: [], runAtLoad: true, keepAlive: false, disabled: false, programExists: false, signature: null, app: null, findings: [{ level: "info", code: "programMissing" }] },
+      { scope: "allUsers", plist: "/Library/LaunchAgents/us.zoom.updater.plist", label: "us.zoom.updater", program: "/Library/Application Support/zoom.us/ZoomUpdater", arguments: [], runAtLoad: true, keepAlive: false, disabled: false, programExists: true, signature: { kind: "developerId", teamId: "BJ4HAAB9B3" }, app: null, findings: [] },
+    ],
+    apps: [
+      { path: "/Applications/MaxPlayer.app", name: "MaxPlayer", signature: { kind: "adHoc" }, gatekeeper: null, gatekeeperChecked: true, quarantined: true, findings: [{ level: "notice", code: "adhoc" }, { level: "notice", code: "gatekeeperRejected" }] },
+      { path: "/Applications/Figma.app", name: "Figma", signature: { kind: "developerId", teamId: "T8RA8NE3B7" }, gatekeeper: null, gatekeeperChecked: false, quarantined: false, findings: [] },
+    ],
+  } as SecurityAudit), 900),
+);
 
 export function install() {
   mockIPC((cmd, args) => {

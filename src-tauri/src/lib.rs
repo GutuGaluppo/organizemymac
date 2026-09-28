@@ -10,6 +10,7 @@ pub mod images;
 pub mod jobs;
 pub mod menubar;
 pub mod processes;
+pub mod security;
 pub mod smart_care;
 pub mod state;
 pub mod storage;
@@ -109,6 +110,7 @@ pub fn run() {
             commands::images::start_similar_photos,
             commands::images::photo_thumbnail,
             commands::images::delete_photos,
+            commands::security::start_security_audit,
             commands::cloud::cloud_folders,
             commands::cloud::start_cloud_usage,
             commands::cloud::evict_icloud,

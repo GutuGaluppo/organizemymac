@@ -57,7 +57,7 @@ pub fn source_of(app: &AppInfo) -> (UpdateSource, Option<String>) {
 
 /// Compares dotted versions numerically ("1.10" > "1.9"); non-numeric parts compare as text.
 pub fn compare_versions(a: &str, b: &str) -> Ordering {
-    let parts = |s: &str| s.split(|c: char| c == '.' || c == '-' || c == ' ' || c == '_').filter(|p| !p.is_empty()).map(String::from).collect::<Vec<_>>();
+    let parts = |s: &str| s.split(['.', '-', ' ', '_']).filter(|p| !p.is_empty()).map(String::from).collect::<Vec<_>>();
     let (pa, pb) = (parts(a), parts(b));
     for i in 0..pa.len().max(pb.len()) {
         let x = pa.get(i).map(String::as_str).unwrap_or("0");
@@ -77,7 +77,7 @@ pub fn compare_versions(a: &str, b: &str) -> Ordering {
 pub fn is_prerelease(version: &str) -> bool {
     let v = version.to_lowercase();
     ["alpha", "beta", "rc", "preview", "dev"].iter().any(|t| v.contains(t))
-        || v.split(|c: char| c == '.' || c == '-').any(|part| {
+        || v.split(['.', '-']).any(|part| {
             let digits = part.trim_end_matches(|c: char| c.is_ascii_digit());
             part.chars().next().is_some_and(|c| c.is_ascii_digit()) && digits.chars().last().is_some_and(|c| matches!(c, 'a' | 'b'))
         })
