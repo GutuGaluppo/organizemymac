@@ -7,6 +7,7 @@ import { useJob, useJobs } from "../../stores/jobs";
 import { Button, Card, EmptyState, ErrorNote, PageHeader, ProgressBar, Stat } from "../../components/ui";
 import { formatBytes, formatCount, formatDuration, shortPath } from "../../lib/format";
 import type { ScanResult, StorageNode } from "../../types";
+import { RowActions } from "../../components/FileTable";
 
 const MODULE = "scanner";
 
@@ -184,12 +185,13 @@ function LargestList({ result, home }: { result: ScanResult; home?: string }) {
       <h2 className="mb-3 text-[13px] font-semibold">Maiores arquivos</h2>
       <div className="space-y-1">
         {result.largestFiles.slice(0, 14).map((f) => (
-          <div key={f.path} className="grid grid-cols-[minmax(0,1fr)_80px] gap-3 text-[12.5px]">
+          <div key={f.path} className="group grid grid-cols-[minmax(0,1fr)_auto_72px] items-center gap-2 text-[12.5px]">
             <div className="min-w-0">
               <div className="truncate">{f.name}</div>
               <div className="truncate text-[11px] text-ink-3">{shortPath(f.path, home)}</div>
             </div>
-            <div className="tabular pt-0.5 text-right text-ink-2">{formatBytes(f.sizeLogical)}</div>
+            <RowActions entry={f} />
+            <div className="tabular text-right text-ink-2">{formatBytes(f.sizeLogical)}</div>
           </div>
         ))}
       </div>

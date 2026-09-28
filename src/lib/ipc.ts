@@ -4,6 +4,9 @@ import { Channel, invoke } from "@tauri-apps/api/core";
 import type {
   AppError,
   AppInfo,
+  OperationOutcome,
+  TrashSummary,
+  Volume,
   IgnoreEntry,
   JobEvent,
   Location,
@@ -42,6 +45,15 @@ export const api = {
   ignoreList: () => invoke<IgnoreEntry[]>("ignore_list"),
   addToIgnoreList: (path: string, reason?: string) => invoke<void>("add_to_ignore_list", { path, reason }),
   removeFromIgnoreList: (path: string) => invoke<void>("remove_from_ignore_list", { path }),
+  diskOverview: () => invoke<Volume[]>("disk_overview"),
+  trashSummary: () => invoke<TrashSummary>("trash_summary"),
+  emptyTrash: () => invoke<OperationOutcome[]>("empty_trash"),
+  emptyTrashWithFinder: () => invoke<void>("empty_trash_with_finder"),
+  revealInFinder: (path: string) => invoke<void>("reveal_in_finder", { path }),
+  quickLook: (path: string) => invoke<void>("quick_look", { path }),
+  moveToTrash: (request: { items: { path: string; size: number }[]; scanRoot?: string }) =>
+    invoke<OperationOutcome[]>("move_to_trash", { request }),
+  pathExists: (path: string) => invoke<boolean>("path_exists", { path }),
 };
 
 export type { ScanResult };

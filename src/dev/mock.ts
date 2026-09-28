@@ -2,7 +2,7 @@
 // answered with fictitious data so screens can be designed and checked without the Rust core.
 // Never bundled into the app (imported only when `import.meta.env.DEV` and outside Tauri).
 import { mockIPC } from "@tauri-apps/api/mocks";
-import type { FileCategory, FileEntry, ScanResult, StorageNode } from "../types";
+import type { DownloadItem, DownloadsResult, FileCategory, FileEntry, FindResult, ScanResult, StorageNode } from "../types";
 
 const HOME = "/Users/demo";
 const now = Date.now();
@@ -155,6 +155,92 @@ registerMock("ignore_list", () => [{ path: `${HOME}/Projects/keep-forever`, adde
 registerMock("add_to_ignore_list", () => null);
 registerMock("remove_from_ignore_list", () => null);
 registerMock("plugin:dialog|open", () => `${HOME}/Projects`);
+
+const baseScan = (root: string): ScanResult => ({
+  id: crypto.randomUUID(),
+  root,
+  startedAt: now - 1500,
+  finishedAt: now,
+  files: 412_318,
+  directories: 61_204,
+  bytesScanned: 318e9,
+  bytesAllocated: 301e9,
+  symlinks: 1_830,
+  cloudPlaceholders: 214,
+  warnings: 0,
+  durationMs: 1490,
+  cancelled: false,
+  reclaimableBytes: 0,
+  largestFiles: [],
+  tree: null,
+});
+
+registerMock("disk_overview", () => [
+  { name: "Macintosh HD", mountPoint: "/", fileSystem: "apfs", total: 994.66e9, free: 212.4e9, used: 782.2e9, isRoot: true, readOnly: false, local: true },
+  { name: "Backup", mountPoint: "/Volumes/Backup", fileSystem: "apfs", total: 2e12, free: 1.31e12, used: 690e9, isRoot: false, readOnly: false, local: true },
+]);
+
+registerMock("start_find_files", ({ root, filter, onEvent }) =>
+  streamJob<FindResult>(onEvent, root as string, () => {
+    const f = filter as { minSize: number };
+    const matches = demoLargest().filter((x) => x.sizeLogical >= f.minSize && !x.path.includes("/Library/"));
+    return { ...baseScan(root as string), matches, matched: matches.length, matchedBytes: matches.reduce((a, b) => a + b.sizeLogical, 0), truncated: false };
+  }, 1400),
+);
+
+const dl = (name: string, size: number, age: number, category: FileCategory, group: DownloadItem["group"], extra: Partial<DownloadItem> = {}): DownloadItem => ({
+  ...fakeFile(`${HOME}/Downloads/${name}`, size, age, category),
+  group,
+  ageDays: age,
+  extracted: false,
+  confidence: group === "oldInstaller" ? "safe" : "review",
+  selected: group === "oldInstaller",
+  ...extra,
+});
+
+registerMock("start_downloads_scan", ({ onEvent }) =>
+  streamJob<DownloadsResult>(onEvent, `${HOME}/Downloads`, () => {
+    const items: DownloadItem[] = [
+      dl("Figma-126.1.dmg", 540e6, 60, "diskImage", "oldInstaller"),
+      dl("Docker.dmg", 610e6, 120, "diskImage", "oldInstaller"),
+      dl("Zoom.pkg", 98e6, 210, "installer", "oldInstaller"),
+      dl("GoogleChrome.dmg", 230e6, 45, "diskImage", "oldInstaller"),
+      dl("Xcode_26.6.xip", 11.2e9, 95, "other", "largeFile"),
+      dl("ubuntu-24.04-desktop-arm64.iso", 3.4e9, 300, "diskImage", "largeFile"),
+      dl("fotos-viagem.zip", 1.2e9, 40, "archive", "largeFile"),
+      dl("brand-assets.zip", 86e6, 22, "archive", "archive", { extracted: true, confidence: "safe" }),
+      dl("relatorio-dados.tar.gz", 12e6, 16, "archive", "archive"),
+      dl("Raycast.dmg", 72e6, 4, "diskImage", "installer"),
+      dl("Captura de Tela 2026-09-12 às 10.41.22.png", 1.8e6, 16, "image", "screenshot"),
+      dl("Captura de Tela 2026-09-20 às 18.02.03.png", 2.3e6, 8, "image", "screenshot"),
+      dl("contrato-2025.pdf", 1.1e6, 290, "document", "oldFile"),
+      dl("apresentacao.key", 44e6, 12, "document", "recent"),
+    ];
+    return { ...baseScan(`${HOME}/Downloads`), folder: `${HOME}/Downloads`, items, totalBytes: items.reduce((a, b) => a + b.sizeLogical, 0) };
+  }, 1200),
+);
+
+registerMock("trash_summary", () => ({
+  path: `${HOME}/.Trash`,
+  readable: true,
+  files: 1_204,
+  folders: 88,
+  bytes: 6.1e9,
+  items: [
+    { ...fakeFile(`${HOME}/.Trash/old-project`, 3.9e9, 30), isDirectory: true },
+    fakeFile(`${HOME}/.Trash/Figma-125.dmg`, 530e6, 60, "diskImage"),
+    fakeFile(`${HOME}/.Trash/gravação.mov`, 1.4e9, 10, "video"),
+    fakeFile(`${HOME}/.Trash/notas.txt`, 12e3, 5, "document"),
+  ],
+}));
+registerMock("empty_trash", () => [{ path: `${HOME}/.Trash/old-project`, size: 6.1e9, ok: true }]);
+registerMock("empty_trash_with_finder", () => null);
+registerMock("reveal_in_finder", () => null);
+registerMock("quick_look", () => null);
+registerMock("path_exists", () => true);
+registerMock("move_to_trash", ({ request }) =>
+  (request as { items: { path: string; size: number }[] }).items.map((i) => ({ ...i, ok: !i.path.includes("/Library/"), error: i.path.includes("/Library/") ? "blocked by safety rule" : null })),
+);
 
 export function install() {
   mockIPC((cmd, args) => {

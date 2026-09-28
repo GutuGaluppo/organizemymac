@@ -1,6 +1,7 @@
 //! Tauri command layer: the only entry point from the UI. Every command takes typed, validated
 //! arguments; nothing here runs a shell command built from UI input.
 
+pub mod files;
 pub mod scan;
 pub mod system;
 

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type Section = "scanner" | "settings";
+export type Section = "overview" | "scanner" | "largeFiles" | "downloads" | "trash" | "settings";
 
 type NavStore = {
   section: Section;
@@ -8,6 +8,6 @@ type NavStore = {
 };
 
 export const useNav = create<NavStore>((set) => ({
-  section: "scanner",
+  section: "overview",
   go: (section) => set({ section }),
 }));

@@ -1,3 +1,4 @@
+pub mod cleanup;
 pub mod commands;
 pub mod db;
 pub mod error;
@@ -71,6 +72,16 @@ pub fn run() {
             commands::cancel_job,
             commands::scan::start_scan,
             commands::scan::storage_node,
+            commands::files::disk_overview,
+            commands::files::start_find_files,
+            commands::files::start_downloads_scan,
+            commands::files::trash_summary,
+            commands::files::empty_trash,
+            commands::files::empty_trash_with_finder,
+            commands::files::reveal_in_finder,
+            commands::files::quick_look,
+            commands::files::move_to_trash,
+            commands::files::path_exists,
             commands::system::permission_status,
             commands::system::open_system_settings,
             commands::system::suggested_locations,

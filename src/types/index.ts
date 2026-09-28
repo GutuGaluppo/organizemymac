@@ -135,3 +135,57 @@ export type OperationRecord = {
 export type IgnoreEntry = { path: string; addedAt: number; reason?: string | null };
 
 export type AppInfo = { version: string; dataDir: string; logDir: string };
+
+export type Volume = {
+  name: string;
+  mountPoint: string;
+  fileSystem: string;
+  total: number;
+  free: number;
+  used: number;
+  isRoot: boolean;
+  readOnly: boolean;
+  local: boolean;
+};
+
+export type TrashSummary = {
+  path: string;
+  readable: boolean;
+  files: number;
+  folders: number;
+  bytes: number;
+  items: FileEntry[];
+};
+
+export type FileFilter = {
+  minSize: number;
+  olderThanDays?: number | null;
+  dateField: "modified" | "created";
+  extensions: string[];
+  categories: FileCategory[];
+  excludeLibrary: boolean;
+  includeHidden: boolean;
+};
+
+export type FindResult = ScanResult & {
+  matches: FileEntry[];
+  matched: number;
+  matchedBytes: number;
+  truncated: boolean;
+};
+
+export type DownloadGroup = "oldInstaller" | "largeFile" | "archive" | "installer" | "screenshot" | "oldFile" | "recent";
+
+export type DownloadItem = FileEntry & {
+  group: DownloadGroup;
+  ageDays?: number | null;
+  extracted: boolean;
+  confidence: Confidence;
+  selected: boolean;
+};
+
+export type DownloadsResult = ScanResult & {
+  folder: string;
+  items: DownloadItem[];
+  totalBytes: number;
+};

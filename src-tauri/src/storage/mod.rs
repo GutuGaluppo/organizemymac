@@ -1,5 +1,7 @@
+pub mod finder;
 pub mod largest;
 pub mod tree;
+pub mod volumes;
 
 /// Runs several visitors over the same scan.
 pub struct Fanout<'a>(pub Vec<&'a mut dyn crate::filesystem::scanner::ScanVisitor>);
