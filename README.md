@@ -88,6 +88,15 @@ cd src-tauri && cargo run --release --example bench_scan -- ~/
 
 Prévia da interface no navegador, com dados fictícios: `npm run dev` e abra http://localhost:1480.
 
+Build de release (app de 9,7 MB com o helper em Swift):
+
+```bash
+npm run tauri build -- --bundles app
+```
+
+Distribuir para outras pessoas exige assinatura Developer ID, Hardened Runtime (já ligado em
+`tauri.conf.json`) e notarização; o build local sai com assinatura ad hoc.
+
 ## Privacidade
 
 Sem telemetria. O app só acessa a rede quando você pede para verificar atualizações: consulta a App Store (identificador de cada app da App Store) e o endereço de atualização HTTPS que cada app declara. Histórico de análises, registro de operações e estatísticas ficam só no Mac, em
